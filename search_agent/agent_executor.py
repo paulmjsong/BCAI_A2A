@@ -8,7 +8,7 @@ from a2a.server.events import EventQueue
 from a2a.utils import new_agent_text_message
 
 class ArxivSearchAgent:
-    """Arxiv Search Agent."""
+    """Arxiv Search Agent"""
 
     async def extract_text_from_pdf_url(self, url):
         response = requests.get(url)
@@ -37,7 +37,7 @@ class ArxivSearchAgent:
 
 # 아카이브 검색 에이전트 실행 class
 class ArxivSearchAgentExecutor(AgentExecutor):
-    """Test AgentProxy Implementation."""
+    """Agen Executor for Arxiv Search Agent"""
 
     def __init__(self):
         self.agent = ArxivSearchAgent()

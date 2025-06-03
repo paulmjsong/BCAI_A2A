@@ -21,38 +21,28 @@ def main(host, port):
         input_modes=["text/plain"],
         output_modes=["application/json"]
     )
-
-    # 3. A2A 에이전트 서버 생성
-    public_agent_card = AgentCard(
+    # 2. A2A 에이전트 서버 생성
+    agent_card = AgentCard(
         name="ArxivSearchAgent",
         description="ArXiv 논문 검색 에이전트",
+        url=f'http://{host}:{port}/',
         version="1.0.0",
+        defaultInputModes=['text'],
+        defaultOutputModes=['text'],
+        capabilities=AgentCapabilities(streaming=True),
         skills=[skill]
     )
-    # public_agent_card = AgentCard(
-    #     name='Arxiv Search Agent',
-    #     description='ArXiv 논문 검색 에이전트',
-    #     url='http://localhost:9999/',
-    #     version='1.0.0',
-    #     defaultInputModes=['text'],
-    #     defaultOutputModes=['text'],
-    #     capabilities=AgentCapabilities(streaming=True),
-    #     skills=[skill],
-    #     supportsAuthenticatedExtendedCard=True,
-    # )
-
-    # 4. 에이전트 서버 실행
+    # 3. 에이전트 서버 실행
     request_handler = DefaultRequestHandler(
         agent_executor=ArxivSearchAgentExecutor(),
         task_store=InMemoryTaskStore(),
     )
-
     server = A2AStarletteApplication(
-        agent_card=public_agent_card,
+        agent_card=agent_card,
         http_handler=request_handler
     )
+    uvicorn.run(server.build(), host=host, port=port)
 
-    uvicorn.run(server.build(), host='0.0.0.0', port=9999)
 
 if __name__ == '__main__':
     main()

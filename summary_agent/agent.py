@@ -1,119 +1,15 @@
 import json
-import random
 from typing import Any, AsyncIterable, Optional
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
-from google.adk.tools.tool_context import ToolContext
 from google.genai import types
 
 
-# Local cache of created request_ids for demo purposes.
-request_ids = set()
-
-
-def create_request_form(
-    date: Optional[str] = None,
-    amount: Optional[str] = None,
-    purpose: Optional[str] = None,
-) -> dict[str, Any]:
-    """
-    Create a request form for the employee to fill out.
-
-    Args:
-        date (str): The date of the request. Can be an empty string.
-        amount (str): The requested amount. Can be an empty string.
-        purpose (str): The purpose of the request. Can be an empty string.
-
-    Returns:
-        dict[str, Any]: A dictionary containing the request form data.
-    """
-    request_id = 'request_id_' + str(random.randint(1000000, 9999999))
-    request_ids.add(request_id)
-    return {
-        'request_id': request_id,
-        'date': '<transaction date>' if not date else date,
-        'amount': '<transaction dollar amount>' if not amount else amount,
-        'purpose': '<business justification/purpose of the transaction>'
-        if not purpose
-        else purpose,
-    }
-
-
-def return_form(
-    form_request: dict[str, Any],
-    tool_context: ToolContext,
-    instructions: Optional[str] = None,
-) -> dict[str, Any]:
-    """
-    Returns a structured json object indicating a form to complete.
-
-    Args:
-        form_request (dict[str, Any]): The request form data.
-        tool_context (ToolContext): The context in which the tool operates.
-        instructions (str): Instructions for processing the form. Can be an empty string.
-
-    Returns:
-        dict[str, Any]: A JSON dictionary for the form response.
-    """
-    if isinstance(form_request, str):
-        form_request = json.loads(form_request)
-
-    tool_context.actions.skip_summarization = True
-    tool_context.actions.escalate = True
-    form_dict = {
-        'type': 'form',
-        'form': {
-            'type': 'object',
-            'properties': {
-                'date': {
-                    'type': 'string',
-                    'format': 'date',
-                    'description': 'Date of expense',
-                    'title': 'Date',
-                },
-                'amount': {
-                    'type': 'string',
-                    'format': 'number',
-                    'description': 'Amount of expense',
-                    'title': 'Amount',
-                },
-                'purpose': {
-                    'type': 'string',
-                    'description': 'Purpose of expense',
-                    'title': 'Purpose',
-                },
-                'request_id': {
-                    'type': 'string',
-                    'description': 'Request id',
-                    'title': 'Request ID',
-                },
-            },
-            'required': list(form_request.keys()),
-        },
-        'form_data': form_request,
-        'instructions': instructions,
-    }
-    return json.dumps(form_dict)
-
-
-def reimburse(request_id: str) -> dict[str, Any]:
-    """Reimburse the amount of money to the employee for a given request_id."""
-    if request_id not in request_ids:
-        return {
-            'request_id': request_id,
-            'status': 'Error: Invalid request_id.',
-        }
-    return {'request_id': request_id, 'status': 'approved'}
-
-
-class ReimbursementAgent:
-    """An agent that handles reimbursement requests."""
-
-    SUPPORTED_CONTENT_TYPES = ['text', 'text/plain']
-
+class SummaryAgent:
+    """Paper Summary Agent"""
     def __init__(self):
         self._agent = self._build_agent()
         self._user_id = 'remote_agent'
@@ -126,54 +22,42 @@ class ReimbursementAgent:
         )
 
     def get_processing_message(self) -> str:
-        return 'Processing the reimbursement request...'
+        return '요약 요청을 처리하는 중입니다...'
 
     def _build_agent(self) -> LlmAgent:
-        """Builds the LLM agent for the reimbursement agent."""
+        """Builds the LLM agent for the summary agent."""
         return LlmAgent(
-            model='gemini-2.0-flash-001',
-            name='reimbursement_agent',
+            model='gemini-2.5-flash-preview-05-20',
+            name='summary_agent',
             description=(
-                'This agent handles the reimbursement process for the employees'
-                ' given the amount and purpose of the reimbursement.'
+                '최대 10개의 연구 논문을 입력 받아 한국어로 사람이 이해하기 쉬운 요약문을 생성하는 에이전트'
             ),
             instruction="""
-    You are an agent who handles the reimbursement process for employees.
+다음은 최대 10개의 연구 논문 전문 텍스트입니다. 각 논문의 핵심 내용을 간결하고 명확하게 한국어로 요약하십시오. 
 
-    When you receive a reimbursement request, you should first create a new request form using create_request_form(). Only provide default values if they are provided by the user, otherwise use an empty string as the default value.
-      1. 'Date': the date of the transaction.
-      2. 'Amount': the dollar amount of the transaction.
-      3. 'Business Justification/Purpose': the reason for the reimbursement.
+- 논문별로 구분해서 번호를 붙여 요약해 주세요.
+- 요약은 전문적이면서도 사람이 쉽게 이해할 수 있는 문체로 작성해 주세요.
+- 필요하면 중요한 결과나 기여도 강조해 주세요.
+- 각 논문 내용이 길 경우 핵심만 뽑아 최대 200자 내외로 요약해 주세요.
 
-    Once you created the form, you should return the result of calling return_form with the form data from the create_request_form call.
+아래에 입력된 논문 텍스트를 참고하여 요약문을 작성하십시오.
+    """)
 
-    Once you received the filled-out form back from the user, you should then check the form contains all required information:
-      1. 'Date': the date of the transaction.
-      2. 'Amount': the value of the amount of the reimbursement being requested.
-      3. 'Business Justification/Purpose': the item/object/artifact of the reimbursement.
-
-    If you don't have all of the information, you should reject the request directly by calling the request_form method, providing the missing fields.
-
-
-    For valid reimbursement requests, you can then use reimburse() to reimburse the employee.
-      * In your response, you should include the request_id and the status of the reimbursement request.
-
-    """,
-            tools=[
-                create_request_form,
-                reimburse,
-                return_form,
-            ],
+    async def stream(self, papers, session_id) -> AsyncIterable[dict[str, Any]]:
+        # 1. Prepare query with papers
+        combined_text = "\n\n".join(
+            [f"[논문 {i+1}]\n{paper.strip()}" for i, paper in enumerate(papers)]
         )
+        full_query = f"다음은 {len(papers)}개의 연구 논문 전문입니다. 아래 논문들을 읽고, 각각을 한국어로 간결하게 요약해주세요:\n\n{combined_text}"
 
-    async def stream(self, query, session_id) -> AsyncIterable[dict[str, Any]]:
+        # 2. Send query to agent
         session = await self._runner.session_service.get_session(
             app_name=self._agent.name,
             user_id=self._user_id,
             session_id=session_id,
         )
         content = types.Content(
-            role='user', parts=[types.Part.from_text(text=query)]
+            role='user', parts=[types.Part.from_text(text=full_query)]
         )
         if session is None:
             session = await self._runner.session_service.create_session(
