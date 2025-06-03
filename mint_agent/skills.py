@@ -1,6 +1,8 @@
 # mint_agent/skills.py
 from a2a import skill, call_remote
 from web3 import Web3
+import os
+
 w3 = Web3(Web3.HTTPProvider(os.getenv("WL_RPC")))
 contract = w3.eth.contract(address=os.getenv("NFT_ADDR"), abi=ABI)
 
