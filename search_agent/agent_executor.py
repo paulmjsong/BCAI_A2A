@@ -16,26 +16,29 @@ class ArxivSearchAgent:
             sort_by = arxiv.SortCriterion.Relevance # 관련있는 논문만 검색
         )
 
+        # 검색한 논문들의 제목과 저자, pdf url 링크를 리스트에 딕셔너리 형태로 저장
         paper_titles = []
         for result in search.results():
             paper_titles.append({
                 "title": result.title,
                 "authors": [author.name for author in result.authors],
-                # "summary": result.summary,
                 "url": result.entry_id
             })
 
         return paper_titles
 
+# 아카이브 검색 에이전트 실행 class
 class ArxivSearchAgentExecutor(AgentExecutor):
     """Test AgentProxy Implementation."""
 
     def __init__(self):
         self.agent = ArxivSearchAgent()
     
+    # 에이전트가 호출될 때 실행되는 코드
     async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
         result = await self.agent.invoke()
         event_queue.enqueue_event(new_agent_text_message(result))
     
+    # 에러 핸들링: 에이전트 실행에 오류가 있는 경우
     async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
         raise Exception('cancel not supported')
