@@ -4,7 +4,7 @@ from a2a.server.events import EventQueue
 from a2a.utils import new_agent_text_message
 
 class ArxivSearchAgent:
-    """Arxiv Search Agent."""
+    """Arxiv Search Agent"""
 
     async def invoke(self, query, max_results = 10) -> str:
         if max_results > 10:
@@ -28,7 +28,7 @@ class ArxivSearchAgent:
         return paper_titles
 
 class ArxivSearchAgentExecutor(AgentExecutor):
-    """Test AgentProxy Implementation."""
+    """Agen Executor for Arxiv Search Agent"""
 
     def __init__(self):
         self.agent = ArxivSearchAgent()

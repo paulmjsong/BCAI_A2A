@@ -1,38 +1,22 @@
 import json
 
-
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.server.tasks import TaskUpdater
-from a2a.types import (
-    DataPart,
-    Part,
-    Task,
-    TaskState,
-    TextPart,
-    UnsupportedOperationError,
-)
-from a2a.utils import (
-    new_agent_parts_message,
-    new_agent_text_message,
-    new_task,
-)
+from a2a.types import DataPart, Part, Task, TaskState, TextPart, UnsupportedOperationError
+from a2a.utils import new_agent_parts_message, new_agent_text_message, new_task
 from a2a.utils.errors import ServerError
-from agent import ReimbursementAgent
+from agent import SummaryAgent
 
 
-class ReimbursementAgentExecutor(AgentExecutor):
-    """Reimbursement AgentExecutor Example."""
+class SummaryAgentExecutor(AgentExecutor):
+    """Summary Agent Executor"""
 
     def __init__(self):
-        self.agent = ReimbursementAgent()
+        self.agent = SummaryAgent()
 
-    async def execute(
-        self,
-        context: RequestContext,
-        event_queue: EventQueue,
-    ) -> None:
-        query = context.get_user_input()
+    async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
+        papers = context.get_user_input()  # TODO
         task = context.current_task
 
         # This agent always produces Task objects. If this request does
@@ -43,7 +27,7 @@ class ReimbursementAgentExecutor(AgentExecutor):
         updater = TaskUpdater(event_queue, task.id, task.contextId)
         # invoke the underlying agent, using streaming results. The streams
         # now are update events.
-        async for item in self.agent.stream(query, task.contextId):
+        async for item in self.agent.stream(papers, task.contextId):
             is_task_complete = item['is_task_complete']
             artifacts = None
             if not is_task_complete:
@@ -91,7 +75,5 @@ class ReimbursementAgentExecutor(AgentExecutor):
                 updater.complete()
                 break
 
-    async def cancel(
-        self, request: RequestContext, event_queue: EventQueue
-    ) -> Task | None:
+    async def cancel(self, request: RequestContext, event_queue: EventQueue) -> Task | None:
         raise ServerError(error=UnsupportedOperationError())
