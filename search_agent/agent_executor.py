@@ -1,10 +1,19 @@
 import arxiv
+import requests
+import pdfplumber
+
+from io import BytesIO
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.utils import new_agent_text_message
 
 class ArxivSearchAgent:
     """Arxiv Search Agent."""
+
+    async def extract_text_from_pdf_url(self, url):
+        response = requests.get(url)
+        with pdfplumber.open(BytesIO(response.content)) as pdf:
+            return "\n".join([page.extract_text() for page in pdf.pages])
 
     async def invoke(self, query, max_results = 10) -> str:
         if max_results > 10:
@@ -16,16 +25,15 @@ class ArxivSearchAgent:
             sort_by = arxiv.SortCriterion.Relevance # 관련있는 논문만 검색
         )
 
-        # 검색한 논문들의 제목과 저자, pdf url 링크를 리스트에 딕셔너리 형태로 저장
-        paper_titles = []
+        # 검색한 논문들의 제목 (key) 과 논문 내용 (value) 딕셔너리 형태로 저장
+        paper = {}
         for result in search.results():
-            paper_titles.append({
-                "title": result.title,
-                "authors": [author.name for author in result.authors],
-                "url": result.entry_id
-            })
+            paper[result.doi] = {
+                "title" : result.title, # 논문 제목
+                "content": self.extract_text_from_pdf_url(result.pdf_url)
+            }
 
-        return paper_titles
+        return paper
 
 # 아카이브 검색 에이전트 실행 class
 class ArxivSearchAgentExecutor(AgentExecutor):
