@@ -11,11 +11,13 @@ from agent_executor import ArxivSearchAgentExecutor
 @click.option('--host', default='localhost')
 @click.option('--port', default=10002)
 def main(host, port):
-    # 1. 스킬 메타데이터 설정
+    # skill metadata 설정: Agent card에 표시될 내용
     skill = AgentSkill(
         id="search_arxiv",
-        name="ArXiv 논문 검색",
-        description="키워드로 arXiv에서 관련 학술 논문을 검색합니다",
+        name="ArXiv paper search",
+        description = "Search for academic papers on arXiv using keywords.",
+        
+        # 지원 입출력 형태 명시 (텍스트 입력 -> JSON 출력)
         input_modes=["text/plain"],
         output_modes=["application/json"]
     )
