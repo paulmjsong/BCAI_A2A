@@ -5,27 +5,6 @@ from a2a.utils import new_agent_text_message
 from google.adk.agents.llm_agent import LlmAgent
 
 
-def search_papers(query: str, max_results: int = 10) -> list[dict]:
-    # Search for up to 10 arXiv papers related to user's query
-    if max_results > 10:
-        max_results = 10
-    search = arxiv.Search(
-        query = query,
-        max_results = max_results,
-        sort_by = arxiv.SortCriterion.Relevance
-    )
-    paper_list = []
-    for result in search.results():
-        paper_list.append({
-            "title": result.title,
-            "summary": result.summary,
-            "authors": [author.name for author in result.authors],
-            "published": result.published.strftime('%Y-%m-%d'),
-            "url": result.id
-        })
-    return paper_list
-
-
 class ResearchAgent:
     """Agent that analyzes research trends based on relevant arXiv papers"""
 
@@ -45,6 +24,25 @@ class ResearchAgent:
             ),
         )
 
+    def search_papers(query: str, max_results: int = 10) -> list[dict]:
+        if max_results > 10:
+            max_results = 10
+        search = arxiv.Search(
+            query = query,
+            max_results = max_results,
+            sort_by = arxiv.SortCriterion.Relevance
+        )
+        paper_list = []
+        for result in search.results():
+            paper_list.append({
+                "title": result.title,
+                "summary": result.summary,
+                "authors": [author.name for author in result.authors],
+                "published": result.published.strftime('%Y-%m-%d'),
+                "url": result.id
+            })
+        return paper_list
+
     async def invoke(self, query: str) -> str:
         # Step 1: Search for relevant papers on arXiv
         papers = self.search_papers(query)
@@ -60,7 +58,8 @@ class RearchAgentExecutor(AgentExecutor):
         self.agent = ResearchAgent()
     
     async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
-        result = await self.agent.invoke()
+        query = context.get_user_input()
+        result = await self.agent.invoke(query)
         event_queue.enqueue_event(new_agent_text_message(result))
     
     async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
