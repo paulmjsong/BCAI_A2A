@@ -9,23 +9,22 @@ from agent_executor import ArxivSearchAgentExecutor
 
 @click.command()
 @click.option('--host', default='localhost')
-@click.option('--port', default=10002)
+@click.option('--port', default=10001)
+
 def main(host, port):
-    # skill metadata 설정: Agent card에 표시될 내용
+    # 1. 스킬 메타데이터 설정
     skill = AgentSkill(
         id="search_arxiv",
-        name="ArXiv paper search",
-        description = "Search for academic papers on arXiv using keywords.",
-        
-        # 지원 입출력 형태 명시 (텍스트 입력 -> JSON 출력)
-        input_modes=["text/plain"],
-        output_modes=["application/json"]
+        name="Search Arxiv",
+        description="Search arXiv for research papers related to user's query",
+        input_modes=['text/plain'],
+        output_modes=['text/plain']
     )
     # 2. A2A 에이전트 서버 생성
     agent_card = AgentCard(
-        name="ArxivSearchAgent",
-        description="ArXiv 논문 검색 에이전트",
-        url=f'http://{host}:{port}/',
+        name="Arxiv Search Agent",
+        description="I can search arXiv for research papers related to your topic of interest",
+        url=f"http://{host}:{port}/",
         version="1.0.0",
         defaultInputModes=['text'],
         defaultOutputModes=['text'],

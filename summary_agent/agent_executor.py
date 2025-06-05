@@ -1,5 +1,6 @@
-import json
+### WORK IN PROGRESS ###
 
+import json
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.server.tasks import TaskUpdater
@@ -12,11 +13,12 @@ from agent import SummaryAgent
 class SummaryAgentExecutor(AgentExecutor):
     """Summary Agent Executor"""
 
-    def __init__(self):
+    def __init__(self, calendar_agent_url):
         self.agent = SummaryAgent()
+        self.calendar_agent_endpoint = calendar_agent_url
 
     async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
-        papers = context.get_user_input()  # TODO
+        # papers = context.get_user_input()  # TODO
         task = context.current_task
 
         # This agent always produces Task objects. If this request does

@@ -1,3 +1,5 @@
+### WORK IN PROGRESS ###
+
 import click
 import uvicorn
 from a2a.server.apps import A2AStarletteApplication
@@ -5,13 +7,17 @@ from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from agent_executor import BillingAgentExecutor
+from ...resarch_agent.agent_executor import ResearchAgentExecutor
 
 
 @click.command()
 @click.option('--host', default='localhost')
-@click.option('--port', default=10002)
+@click.option('--port', default=10000)
+@click.option(
+    '--research-agent', 'research_agent', default='http://localhost:10002'
+)
 
-def main(host, port):
+def main(host, port, research_agent):
     # 1. 스킬 메타데이터 설정
     skill = AgentSkill(
         id="billing",
@@ -33,7 +39,7 @@ def main(host, port):
     )
     # 3. 에이전트 서버 실행
     request_handler = DefaultRequestHandler(
-        agent_executor=BillingAgentExecutor(),
+        agent_executor=BillingAgentExecutor(research_agent),
         task_store=InMemoryTaskStore(),
     )
     server = A2AStarletteApplication(
@@ -45,3 +51,7 @@ def main(host, port):
 
 if __name__ == '__main__':
     main()
+
+
+# TODO: interact with user agent
+# TODO: interact with research agent
