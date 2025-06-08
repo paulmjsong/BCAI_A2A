@@ -85,7 +85,11 @@ Keep the analysis clear, avoid jargon where possible, and write entirely in **En
 
 # ────────────────── executor ──────────────────
 class ResearchAgentExecutor(AgentExecutor):
-    """Agent Executor for Research Agent"""
+    """
+    Agent Executor for Research Agent
+
+    Receives query → fetches papers → generates content → sends content
+    """
 
     # Initialization
     def __init__(self, agent_card: AgentCard):
@@ -99,7 +103,7 @@ class ResearchAgentExecutor(AgentExecutor):
         )
     
     # Core pipeline
-    async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
+    async def execute(self, context: RequestContext, event_queue: EventQueue):
         updater = TaskUpdater(event_queue, context.task_id, context.context_id)
         if not context.current_task:
             updater.submit()
@@ -135,7 +139,7 @@ class ResearchAgentExecutor(AgentExecutor):
                 )
     
     # Helper functions
-    async def _ensure_session(self, context: RequestContext) -> Session:
+    async def _ensure_session(self, context: RequestContext):
         session = await self.runner.session_service.get_session(
             app_name=self.runner.app_name, 
             session_id=context.context_id,
@@ -145,5 +149,5 @@ class ResearchAgentExecutor(AgentExecutor):
         )
         return session
     
-    async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
+    async def cancel(self, context: RequestContext, event_queue: EventQueue):
         raise ServerError(error=UnsupportedOperationError())
