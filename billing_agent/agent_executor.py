@@ -18,9 +18,129 @@ import utils  # A2A<->GenAI conversion helpers
 
 
 # ────────────────── blockchain / contract config ──────────────────
-WORLDLAND_RPC_URL = "https://seoul.worldland.foundation"   # <- fill in
-CONTRACT_ADDRESS  = "0xDeaDBeef..."                        # <- fill in
-CONTRACT_ABI      = [...]                                  # <- fill in
+WORLDLAND_RPC_URL = "https://seoul.worldland.foundation/"
+CONTRACT_ADDRESS  = "0x98003661dDe56E8A4D47CC0a92Fae65d65f375c6"
+CONTRACT_ABI      = [
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "contentId",
+				"type": "bytes32"
+			}
+		],
+		"name": "makePayment",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_price",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": False,
+		"inputs": [
+			{
+				"indexed": True,
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"indexed": True,
+				"internalType": "bytes32",
+				"name": "contentId",
+				"type": "bytes32"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "PaymentReceived",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_price",
+				"type": "uint256"
+			}
+		],
+		"name": "updatePrice",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"name": "paidContent",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "price",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
 
 # PRIVATE_KEY_OWNER = "0x..."                              # <- fill in
 PRICE_WEI         = 10**16                                 # 0.01 WLC example

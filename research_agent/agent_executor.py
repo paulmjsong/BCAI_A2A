@@ -1,11 +1,11 @@
 import arxiv, logging
 from typing import Dict, List
 
-from google.adk.agents.llm_agent import LlmAgent, RunConfig
+from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.events import Event
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
-from google.adk.runners import Runner
+from google.adk.runners import Runner, RunConfig
 from google.adk.sessions import Session, InMemorySessionService
 from google.genai import types
 

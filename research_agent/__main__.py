@@ -21,6 +21,7 @@ def main(host, port):
         id="analyze_research",
         name="Analyze Research",
         description="Analyze research trend based on arXiv papers relevant to user's query",
+        tags = ["research", "arxiv", "trend"],
         input_modes=["text/plain"],
         output_modes=["text/plain"]
     )

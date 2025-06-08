@@ -24,6 +24,7 @@ def main(host, port, research_agent):
         id="manage_contract",
         name="Manage Contract",
         description="Manage smart contract between user and owner",
+        tags = ["billing", "contract", "worldland"],
         input_modes=["text/plain"],
         output_modes=["text/plain"]
     )
@@ -40,7 +41,8 @@ def main(host, port, research_agent):
     )
     # 3. 에이전트 서버 실행
     request_handler = DefaultRequestHandler(
-        agent_executor=BillingAgentExecutor(research_agent, agent_card),
+        # agent_executor=BillingAgentExecutor(research_agent, agent_card),
+        agent_executor=BillingAgentExecutor(research_agent_url=research_agent),
         task_store=InMemoryTaskStore(),
     )
     server = A2AStarletteApplication(

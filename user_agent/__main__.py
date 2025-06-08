@@ -24,6 +24,7 @@ def main(host, port, owner_agent):
         id="commission_agent",
         name="Commission Agent",
         description="Commission a remote agent over WorldLand",
+        tags=["commission", "worldland", "payment"],
         input_modes=["text/plain"],
         output_modes=["text/plain"]
     )

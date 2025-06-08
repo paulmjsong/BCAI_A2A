@@ -16,8 +16,8 @@ from a2a.utils.errors import ServerError
 
 
 # ────────────────── blockchain / contract config ──────────────────
-WORLDLAND_RPC_URL = "https://seoul.worldland.foundation"   # <- fill in
-PRIVATE_KEY_USER  = "0x..."                                # <- fill in
+WORLDLAND_RPC_URL = "https://seoul.worldland.foundation/"
+PRIVATE_KEY_USER  = "cd86259cdcccf406de50abdfc066908bac165a2ae7e4e7313b561c8748630c3d"
 
 w3 = Web3(Web3.HTTPProvider(WORLDLAND_RPC_URL))
 acct = Account.from_key(PRIVATE_KEY_USER)
