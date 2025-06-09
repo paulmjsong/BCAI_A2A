@@ -21,7 +21,7 @@ load_dotenv()
 WORLDLAND_RPC_URL = "https://seoul.worldland.foundation/"
 w3 = Web3(Web3.HTTPProvider(WORLDLAND_RPC_URL))
 
-# PRIVATE_KEY_USER  = os.getenv("PRIVATE_KEY")
+# PRIVATE_KEY_OWNER = os.getenv("PRIVATE_KEY_OWNER")
 # acct = Account.from_key(PRIVATE_KEY_OWNER)
 
 CONTRACT_ADDRESS  = os.getenv("CONTRACT_ADDRESS")
