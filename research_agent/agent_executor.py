@@ -21,10 +21,10 @@ from a2a.utils.errors import ServerError
 import utils  # A2A<->GenAI conversion helpers
 
 
+MAX_RESULTS = 10
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-
-MAX_RESULTS = 10
 
 
 # ────────────────── arXiv search tool ──────────────────

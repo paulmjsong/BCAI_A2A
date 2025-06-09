@@ -1,7 +1,8 @@
-import asyncio, json, logging
+import asyncio, json, logging, os
+from dotenv import load_dotenv
 from uuid import uuid4
 from web3 import Web3
-from eth_account import Account
+# from eth_account import Account
 
 from a2a.client import A2AClient
 from a2a.server.agent_execution import AgentExecutor, RequestContext
@@ -14,143 +15,20 @@ from a2a.types import (
 )
 from a2a.utils.errors import ServerError
 
-import utils  # A2A<->GenAI conversion helpers
-
 
 # ────────────────── blockchain / contract config ──────────────────
+load_dotenv()
 WORLDLAND_RPC_URL = "https://seoul.worldland.foundation/"
-CONTRACT_ADDRESS  = "0x98003661dDe56E8A4D47CC0a92Fae65d65f375c6"
-CONTRACT_ABI      = [
-	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "contentId",
-				"type": "bytes32"
-			}
-		],
-		"name": "makePayment",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_price",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": False,
-		"inputs": [
-			{
-				"indexed": True,
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": True,
-				"internalType": "bytes32",
-				"name": "contentId",
-				"type": "bytes32"
-			},
-			{
-				"indexed": False,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "PaymentReceived",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_price",
-				"type": "uint256"
-			}
-		],
-		"name": "updatePrice",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"name": "paidContent",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "price",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-]
-
-# PRIVATE_KEY_OWNER = "0x..."                              # <- fill in
-PRICE_WEI         = 10**16                                 # 0.01 WLC example
-
 w3 = Web3(Web3.HTTPProvider(WORLDLAND_RPC_URL))
+
+# PRIVATE_KEY_USER  = os.getenv("PRIVATE_KEY")
 # acct = Account.from_key(PRIVATE_KEY_OWNER)
+
+CONTRACT_ADDRESS  = os.getenv("CONTRACT_ADDRESS")
+CONTRACT_ABI      = os.getenv("CONTRACT_ABI")
+PRICE_WEI         = 10**16  # 0.01 WLC example
 contract = w3.eth.contract(address=CONTRACT_ADDRESS, abi=CONTRACT_ABI)
 
-
-# ────────────────── research_agent endpoint ──────────────────
 POLL_DELAY = 3  # seconds
 
 logger = logging.getLogger(__name__)

@@ -41,7 +41,7 @@ def main(host, port, owner_agent):
     )
     # 3. 에이전트 서버 실행
     request_handler = DefaultRequestHandler(
-        agent_executor=UserAgentExecutor(owner_agent, agent_card),
+        agent_executor=UserAgentExecutor(owner_agent),
         task_store=InMemoryTaskStore(),
     )
     server = A2AStarletteApplication(

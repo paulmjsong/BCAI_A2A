@@ -1,4 +1,5 @@
-import asyncio, json, logging
+import asyncio, json, logging, os
+from dotenv import load_dotenv
 from uuid import uuid4
 from web3 import Web3
 from eth_account import Account
@@ -16,14 +17,13 @@ from a2a.utils.errors import ServerError
 
 
 # ────────────────── blockchain / contract config ──────────────────
+load_dotenv()
 WORLDLAND_RPC_URL = "https://seoul.worldland.foundation/"
-PRIVATE_KEY_USER  = "cd86259cdcccf406de50abdfc066908bac165a2ae7e4e7313b561c8748630c3d"
-
 w3 = Web3(Web3.HTTPProvider(WORLDLAND_RPC_URL))
+
+PRIVATE_KEY_USER  = os.getenv("PRIVATE_KEY")
 acct = Account.from_key(PRIVATE_KEY_USER)
 
-
-# ────────────────── owner_agent endpoint ──────────────────
 POLL_DELAY = 3  # seconds
 
 logger = logging.getLogger(__name__)
@@ -39,7 +39,7 @@ class UserAgentExecutor(AgentExecutor):
     """
 
     # Initialization
-    def __init__(self, owner_agent_url, agent_card):
+    def __init__(self, owner_agent_url):
         self.owner_agent_endpoint = owner_agent_url
     
     # Core pipeline

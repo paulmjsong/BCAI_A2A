@@ -41,8 +41,7 @@ def main(host, port, research_agent):
     )
     # 3. 에이전트 서버 실행
     request_handler = DefaultRequestHandler(
-        # agent_executor=BillingAgentExecutor(research_agent, agent_card),
-        agent_executor=BillingAgentExecutor(research_agent_url=research_agent),
+        agent_executor=BillingAgentExecutor(research_agent),
         task_store=InMemoryTaskStore(),
     )
     server = A2AStarletteApplication(
