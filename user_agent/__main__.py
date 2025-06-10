@@ -12,13 +12,10 @@ from agent_executor import UserAgentExecutor
 logging.basicConfig()
 
 @click.command()
-@click.option('--host', default='localhost')
-@click.option('--port', default=10000)
-@click.option(
-    '--owner-agent', 'owner_agent', default='http://localhost:10001'
-)
+@click.option('--host', default='localhost')  # example
+@click.option('--port', default=10000)        # example
 
-def main(host, port, owner_agent):
+def main(host, port):
     # 1. 스킬 메타데이터 설정
     skill = AgentSkill(
         id="commission_agent",
@@ -41,7 +38,7 @@ def main(host, port, owner_agent):
     )
     # 3. 에이전트 서버 실행
     request_handler = DefaultRequestHandler(
-        agent_executor=UserAgentExecutor(owner_agent),
+        agent_executor=UserAgentExecutor(),
         task_store=InMemoryTaskStore(),
     )
     server = A2AStarletteApplication(

@@ -12,8 +12,8 @@ from agent_executor import ResearchAgentExecutor
 logging.basicConfig()
 
 @click.command()
-@click.option('--host', default='localhost')
-@click.option('--port', default=10002)
+@click.option('--host', default='localhost')  # example
+@click.option('--port', default=10002)        # example
 
 def main(host, port):
     # 1. 스킬 메타데이터 설정

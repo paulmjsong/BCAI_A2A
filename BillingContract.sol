@@ -32,8 +32,6 @@ contract PaymentContract {
     }
 
     // Function to update price of content
-    // onlyOwner modifier가 붙어 있어 소유자만 호출 가능
-    // 단일 가격 모델이기 때문에 모든 콘텐츠의 가격이 한번에 변경됨
     function updatePrice(uint _price) public onlyOwner {
         price = _price;
     }

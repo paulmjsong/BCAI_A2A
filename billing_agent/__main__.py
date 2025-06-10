@@ -12,9 +12,9 @@ from agent_executor import BillingAgentExecutor
 logging.basicConfig()
 
 @click.command()
-@click.option('--host', default='localhost')
-@click.option('--port', default=10001)
-@click.option(
+@click.option('--host', default='localhost')  # example
+@click.option('--port', default=10001)        # example
+@click.option(                                # set to research_agent's actual URL
     '--research-agent', 'research_agent', default='http://localhost:10002'
 )
 
@@ -41,7 +41,7 @@ def main(host, port, research_agent):
     )
     # 3. 에이전트 서버 실행
     request_handler = DefaultRequestHandler(
-        agent_executor=BillingAgentExecutor(research_agent),
+        agent_executor=BillingAgentExecutor(agent_card, research_agent),
         task_store=InMemoryTaskStore(),
     )
     server = A2AStarletteApplication(
