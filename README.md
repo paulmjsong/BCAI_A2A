@@ -105,6 +105,7 @@ All responses included readable, coherent summaries with citations where relevan
 ## 📚 File Structure
 ```bash
 BCAI_A2A
+├── .env
 ├── BillingContract.sol
 ├── README.md
 ├── billing_agent
