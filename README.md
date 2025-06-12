@@ -103,8 +103,8 @@ All responses included readable, coherent summaries with citations where relevan
 
 
 ## 📚 File Structure
-
-.
+```bash
+BCAI_A2A
 ├── BillingContract.sol
 ├── README.md
 ├── billing_agent
@@ -124,6 +124,7 @@ All responses included readable, coherent summaries with citations where relevan
 └── user_agent
     ├── __main__.py
     └── agent_executor.py
+```
 
 
 ## 📌 Summary
