@@ -69,10 +69,10 @@ While Web3 infrastructures offer user sovereignty and decentralization, there is
 We ran several experiments where queries were submitted on various academic topics. Example results:
 
 | Topic             | No. of Papers Retrieved | Summary Length | Time to Completion | Payment (ETH) |
-|-------------------|--------------------------|----------------|---------------------|---------------|
-| RAG               | 7                        | ~400 words     | ~12 seconds         | 0.0002        |
-| AI Safety         | 5                        | ~300 words     | ~10 seconds         | 0.00015       |
-| Blockchain Scaling| 6                      | ~350 words     | ~11 seconds         | 0.00018       |
+|-------------------|--------------------------|----------------|-------------------|---------------|
+| RAG               | 10                       | ~400 words     | ~40 seconds       | 0.0002        |
+| AI Safety         | 10                       | ~300 words     | ~40 seconds       | 0.00015       |
+| Blockchain Scaling| 10                       | ~350 words     | ~40 seconds       | 0.00018       |
 
 All responses included readable, coherent summaries with citations where relevant. The Ethereum testnet was used for transactions, and all payments were successfully verified via smart contract before proceeding with inference.
 
