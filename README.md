@@ -80,7 +80,6 @@ All responses included readable, coherent summaries with citations where relevan
 
 ## 🎥 Demo Video
 
-[![Watch Demo](https://img.youtube.com/vi/your_video_id_here/0.jpg)](https://www.youtube.com/watch?v=your_video_id_here)  
 🔗 [Watch Full Demo on YouTube](https://www.youtube.com/watch?v=your_video_id_here)
 
 ---
@@ -123,4 +122,3 @@ This project brings together generative AI and decentralized finance through a n
 
 For more information or collaboration inquiries, please contact:
 📧 your.email@example.com
-🌐 LiberVance
