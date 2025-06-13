@@ -3,73 +3,97 @@
 **This project was completed as the Final Project for ‘Generative AI and Blockchain 2025’ at GIST, supervised by Professor Heung-No Lee.**
 
 
-## 📖 Project Overview
+### Author
 
-This project demonstrates a proof-of-concept digital marketplace utilizing A2A protocol where autonomous agents collaborate and exchange services using smart contracts on the blockchain. The system implements a decentralized interaction between user-owned and service-provider-owned AI agents with privacy-respecting mechanisms, real-time payments, and task delegation. It draws inspiration from the **MyAI Network**—a Web3 AI framework proposed by **LiberVance** for decentralized AI model ownership.
+Minjun Song from EECS, GIST
 
-
-## 🎯 Objectives
-
-- To implement a digital service marketplace where agents can autonomously request and fulfill AI tasks.
-- To enable peer-to-peer microtransactions using Ethereum smart contracts.
-- To ensure a privacy-preserving architecture where user data and queries are not centrally logged.
-- To experiment with the integration of agent communication, blockchain payments, and AI inference tasks in a coherent pipeline.
+Junsung Kim from EECS, GIST
 
 
-## 📌 Scope
+### 📖 Project Overview
 
-This project is a minimum viable prototype (MVP) focusing on a research paper summarization service, but the architecture is extendable to various AI services. Currently, it demonstrates:
+This repository presents a proof-of-concept digital marketplace in which autonomous agents collaborate and exchange AI services by means of an Agent-to-Agent (A2A) protocol and EVM smart-contract payments.
 
-- **Agent-to-Agent (A2A)** interaction protocol.
-- **Blockchain-based billing** and payment confirmation.
-- **On-demand AI services**, e.g., research summarization via arXiv API.
-- **User interface built with Gradio** for ease of access.
+Inspired by **LiberVance MyAI Network**, the system features:
 
-
-## ❓ Problem Definition
-
-While Web3 infrastructures offer user sovereignty and decentralization, there is no standardized protocol for AI agents to interact, transact, and commission tasks among each other autonomously. Current models either rely on centralized APIs or suffer from inefficient micropayment handling. This project solves this gap by:
-
-- Introducing a working A2A interaction pattern,
-- Utilizing smart contracts for trustless payments,
-- Ensuring that individual users retain control over their data and agents.
+* Decentralized interaction between **user-owned** and **service-provider-owned** AI agents  
+* Privacy-respecting design (no central logging of prompts or outputs)
+* Real-time, trust-less payments via on-chain escrow  
+* Task delegation and fulfillment entirely managed by agents
 
 
-## ✅ Claims and Achievements
+### 🎯 Objectives
 
-1. **Implemented a full-stack A2A protocol-based system with real smart contract integration.**
-2. **Enabled autonomous inter-agent task delegation and execution via Ethereum smart contracts.**
-3. **Demonstrated effective summarization of academic research papers via external API calls (arXiv).**
-4. **Showcased a user-friendly interface for initiating and monitoring AI services.**
-5. **Maintained a fully decentralized architecture where service-providing agents are independently deployed.**
-
-
-## 🧠 AI Methods Used
-
-- **Text Summarization**: Keyword-guided summary generation using a fine-tuned transformer-based LLM.
-- **Research Retrieval**: Integration with the arXiv API for up-to-date academic literature on user-defined topics.
-- **Agent Autonomy**: Agents operate independently and communicate via structured JSON messages over the A2A protocol.
+* Build a marketplace where agents can **autonomously request and fulfil AI tasks**  
+* Enable **peer-to-peer transactions** through a smart contract  
+* Guarantee **privacy** by never uploading user data to a central server  
+* Prototype a coherent pipeline that integrates agent communication, blockchain payments, and AI inference tasks
 
 
-## 🧪 Experimental Results
+### 📌 Scope
 
+This project is a **minimum viable product (MVP)** focused on a research-trend discovery service, but the architecture is extendable to a wide range of AI services. It currently demonstrates:
+
+* **A2A interaction** between user-owned and provider-owned agents  
+* **Blockchain-based billing & payment confirmation** for full transparency  
+* **On-demand AI services** searching papers via arXiv API and generating trend analysis with Gemini  
+* **Gradio-based UI** for easy access
+
+
+###❓ Problem Definition
+
+Web3 promises user sovereignty and decentralization, but autonomous **AI-to-AI commerce** still lacks a shared framework. Specifically:
+
+1. No open workflow that allows agents to commission, pay for and deliver AI work without relying on centralized APIs or custodial wallets  
+2. ERC-20 payments incur high gas costs or batching overhead, so they are inappropriate for “pay-per-request” AI.  
+3. Traditional AI SaaS logs user data on vendor servers, so it provides weak data protection safeguards.
+
+Our prototype solved above problems by:
+
+* **Executable A2A handshake** (request → invoice → payment → fulfilment)  
+* **On-chain escrow** on the WorldLand network for a transparent settlement  
+* **All prompts & artefacts stay inside each agent** (never stored on a central backend)
+
+
+### ✅ Claims and Achievements
+<!-- have to check this part (1, )/ -->
+1. **Tri-party agent stack** — `UserAgent`, `BillingAgent`, `ResearchAgent` each run an `A2AStarletteApplication`, talking only via JSON  
+2. **On-chain billing flow** — `BillingAgent` issues an invoice, checks the `paidContent()` function in the Solidity contract, then forwards the task  
+3. **End-to-end autonomy** — `UserAgent` polls, signs, sends, waits for the receipt and resumes processing with zero human intervention  
+4. **Research-trend discovery** — `ResearchAgent` pulls ≤10 recent arXiv papers, summarises abstracts and synthesises trends via Gemini-2.5-flash  
+5. **Stateless, decentralised deployment** — no shared DB or orchestrator; each agent can run anywhere
+
+
+### 🧠 AI Methods Used
+<!-- have to check these parts with demo (LLM-powered Trend Analysis, Agent Autonomy layer) -->
+- **LLM-powered Trend Analysis**: Gemini-2.5-flash model creates search terms, summaries and a markdown “Recent Trend Analysis” section for the user. 
+- **Paper Retrieval Tool**: the custom search_papers() helper leverages the arXiv API and filters the top-10 most relevant results for the past year. 
+- **Agent Autonomy Layer**: every request/response is serialised into Part objects, converted to Google Generative AI types.Part when calling the LLM, and back again, enabling model calls to be slotted seamlessly into the A2A pipeline.
+
+
+### 🧪 Experimental Results
+
+<!--
 We ran several experiments where queries were submitted on various academic topics. Example results:
 
-| Topic             | No. of Papers Retrieved | Summary Length | Time to Completion | Payment (WLC) |
-|-------------------|--------------------------|----------------|-------------------|---------------|
-| RAG               | 10                       | ~400 words     | ~40 seconds       | 0.0002        |
-| AI Safety         | 10                       | ~300 words     | ~40 seconds       | 0.00015       |
-| Blockchain Scaling| 10                       | ~350 words     | ~40 seconds       | 0.00018       |
+| Topic             | No. of Papers Retrieved  | Summary Length | Time to Completion | Payment (WLC) |
+|-------------------|--------------------------|----------------|--------------------|---------------|
+| RAG               | 10                       | ~400 words     | ~40 seconds        | 0.0002        |
+| AI Safety         | 10                       | ~300 words     | ~40 seconds        | 0             |
+| Blockchain Scaling| 10                       | ~350 words     | ~40 seconds        | 0             |
 
 All responses included readable, coherent summaries with citations where relevant. The Ethereum testnet was used for transactions, and all payments were successfully verified via smart contract before proceeding with inference.
+-->
 
 
-## 🎥 Demo Video
+<!-- 
+### 🎥 Demo Video
 
-🔗 attach demo video here
+🔗 attach demo video here (GIF) 
+-->
 
 
-## 🚀 How to Run
+### 🚀 How to Run
 
 1. **Clone the repository:**
    ```bash
@@ -79,11 +103,11 @@ All responses included readable, coherent summaries with citations where relevan
 
 2. **Install dependencies:**
    ```bash
-   pip install -r requirements.txt
+   pip install -r requirement.txt
    ```
 
 3. **Configure your WorldLand wallet and environment:**
-   - Deploy the billing smart contract using the provided script.
+   - Deploy the smart contract using the provided **BillingContract.sol**.
    - Add your metamask wallet private key, contract address, and Gemini api key in .env
 
 4. **Start Billing Agent and Research Agent:**
@@ -98,11 +122,11 @@ All responses included readable, coherent summaries with citations where relevan
    python3 client.py
    ```
 
-6. **Use the Gradio UI** 
-    to input a query, make the payment (on WorldLand mainnet), and receive summarized research.
+6. **Interaction** 
+   Enter a query and receive the summarised trends.
 
 
-## 📚 File Structure
+### 📚 File Structure
 ```bash
 BCAI_A2A
 ├── .env
@@ -128,14 +152,16 @@ BCAI_A2A
 ```
 
 
-## 📌 Summary
+<!-- 
+### 📌 Summary
 
-This project brings together generative AI and decentralized finance through a novel A2A protocol. It validates the viability of autonomous AI agents performing economic transactions and delivering value in a decentralized network. Our modular design allows easy scalability and customization to support a wide array of agent-based AI services in a Web3 ecosystem.
+This project brings together generative AI and decentralized finance through a novel A2A protocol. It validates the viability of autonomous AI agents performing economic transactions and delivering value in a decentralized network. Our modular design allows easy scalability and customization to support a wide array of agent-based AI services in a Web3 ecosystem. 
+-->
 
 
-## 📬 Contact
+### 📬 Contact
 
-For more information or collaboration inquiries, please contact:
+For more information, please contact:
 
 📧 paulmjsong@gm.gist.ac.kr
 
