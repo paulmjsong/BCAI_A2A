@@ -9,6 +9,7 @@
 
 2️⃣ **Junsung Kim** from EECS, GIST
 
+---
 
 ### 📖 Project Overview
 
@@ -21,6 +22,7 @@ Inspired by **LiberVance MyAI Network**, the system features:
 * Real-time, trust-less payments via on-chain escrow  
 * Task delegation and fulfillment entirely managed by agents
 
+---
 
 ### 🎯 Objectives
 
@@ -29,6 +31,7 @@ Inspired by **LiberVance MyAI Network**, the system features:
 * Guarantee **privacy** by never uploading user data to a central server  
 * Prototype a coherent pipeline that integrates agent communication, blockchain payments, and AI inference tasks
 
+---
 
 ### 📌 Scope
 
@@ -39,6 +42,7 @@ This project is a **minimum viable product (MVP)** focused on a research-trend d
 * **On-demand AI services** searching papers via arXiv API and generating trend analysis with Gemini  
 * **Gradio-based UI** for easy access
 
+---
 
 ### ❓ Problem Definition
 
@@ -54,6 +58,7 @@ Our prototype solved above problems by:
 * **On-chain escrow** on the WorldLand network for a transparent settlement  
 * **All prompts & artefacts stay inside each agent** (never stored on a central backend)
 
+---
 
 ### ✅ Claims and Achievements
 <!-- have to check this part (1, )/ -->
@@ -63,6 +68,7 @@ Our prototype solved above problems by:
 4. **Research-trend discovery** — `ResearchAgent` pulls ≤10 recent arXiv papers, summarises abstracts and synthesises trends via Gemini-2.5-flash  
 5. **Stateless, decentralised deployment** — no shared DB or orchestrator; each agent can run anywhere
 
+---
 
 ### 🧠 AI Methods Used
 <!-- have to check these parts with demo (LLM-powered Trend Analysis, Agent Autonomy layer) -->
@@ -70,6 +76,7 @@ Our prototype solved above problems by:
 - **Paper Retrieval Tool**: the custom search_papers() helper leverages the arXiv API and filters the top-10 most relevant results for the past year. 
 - **Agent Autonomy Layer**: every request/response is serialised into Part objects, converted to Google Generative AI types.Part when calling the LLM, and back again, enabling model calls to be slotted seamlessly into the A2A pipeline.
 
+---
 
 ### 🧪 Experimental Results
 
@@ -85,13 +92,15 @@ We ran several experiments where queries were submitted on various academic topi
 All responses included readable, coherent summaries with citations where relevant. The Ethereum testnet was used for transactions, and all payments were successfully verified via smart contract before proceeding with inference.
 -->
 
+---
 
-<!-- 
 ### 🎥 Demo Video
+<!-- 
 
 🔗 attach demo video here (GIF) 
 -->
 
+---
 
 ### 🚀 How to Run
 
@@ -125,6 +134,7 @@ All responses included readable, coherent summaries with citations where relevan
 6. **Interaction** 
    Enter a query and receive the summarised trends.
 
+---
 
 ### 📚 File Structure
 ```bash
@@ -151,13 +161,15 @@ BCAI_A2A
     └── agent_executor.py
 ```
 
+---
 
-<!-- 
 ### 📌 Summary
+<!-- 
 
 This project brings together generative AI and decentralized finance through a novel A2A protocol. It validates the viability of autonomous AI agents performing economic transactions and delivering value in a decentralized network. Our modular design allows easy scalability and customization to support a wide array of agent-based AI services in a Web3 ecosystem. 
 -->
 
+---
 
 ### 📬 Contact
 
