@@ -40,7 +40,7 @@ This project is a **minimum viable product (MVP)** focused on a research-trend d
 * **Gradio-based UI** for easy access
 
 
-###❓ Problem Definition
+### ❓ Problem Definition
 
 Web3 promises user sovereignty and decentralization, but autonomous **AI-to-AI commerce** still lacks a shared framework. Specifically:
 
