@@ -5,9 +5,9 @@
 
 ### Author
 
-Minjun Song from EECS, GIST
+1️⃣ **Minjun Song** from EECS, GIST
 
-Junsung Kim from EECS, GIST
+2️⃣ **Junsung Kim** from EECS, GIST
 
 
 ### 📖 Project Overview
