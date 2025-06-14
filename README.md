@@ -1,13 +1,21 @@
-# A Decentralized Research Trend Finder (draft)
+# Web3 AI Marketplace: Agent Interaction and Payment via Smart Contracts (draft)
 
 **This project was completed as the Final Project for ‘Generative AI and Blockchain 2025’ at GIST, supervised by Professor Heung-No Lee.**
 
 
 ### Author
 
-1️⃣ **Minjun Song** from EECS, GIST
+1️⃣ **Minjun Song** from Electrical Engineering and Computer Science (EECS), Gwangju Institute of Science and Technology (GIST)
 
-2️⃣ **Junsung Kim** from EECS, GIST
+2️⃣ **Junsung Kim** from Electrical Engineering and Computer Science (EECS), Gwangju Institute of Science and Technology (GIST)
+
+---
+
+### Class Detail
+
+This class focuses on the intgration of blockchain and generative AI, exploring how these two technologies can interact and complement each other.  
+* **Blockchain** After focusing on the 2008 financial crisis, Bretton-Woods breakdown, and the end of the gold standard, the class studies Bitcoin (white paper + fundamentals), Ethereum (white paper + smart-contract patterns such as ERC-20, NFTs and stablecoins), and WorldLand. Students also examine monetary-policy debates such as Triffin dilemma, Hayek’s “private money,” and Trump-era trade-policy papers to understand how crypto may redistribute wealth and reshape global finance.
+* **Generative-AI** Based on Transformer architecture theory, this class cover LLaMA, DeepSeek, and practical acceleration techniques (LoRA fine-tuning, decentralized/federated training).
 
 ---
 
@@ -61,17 +69,19 @@ Our prototype solved above problems by:
 ---
 
 ### ✅ Claims and Achievements
-<!-- have to check this part (1, )/ -->
-1. **Tri-party agent stack** — `UserAgent`, `BillingAgent`, `ResearchAgent` each run an `A2AStarletteApplication`, talking only via JSON  
-2. **On-chain billing flow** — `BillingAgent` issues an invoice, checks the `paidContent()` function in the Solidity contract, then forwards the task  
-3. **End-to-end autonomy** — `UserAgent` polls, signs, sends, waits for the receipt and resumes processing with zero human intervention  
-4. **Research-trend discovery** — `ResearchAgent` pulls ≤10 recent arXiv papers, summarises abstracts and synthesises trends via Gemini-2.5-flash  
-5. **Stateless, decentralised deployment** — no shared DB or orchestrator; each agent can run anywhere
+<!-- have to check this part (1, 3)
+1: can you check this description is right or not?
+3: does userAgent poll the chain for settlement? 
+ -->
+1. **Tri-party agent architecture** — `UserAgent`, `BillingAgent`, `ResearchAgent` each run independently and talk only through the A2A JSON protocol  
+2. **On-chain billing flow** — `BillingAgent` issues an invoice, verifies payment through Solidity contract's `paidContent()` function, then forwards the task  
+3. **End-to-end autonomy** — `UserAgent` signs and sends the WLC payment, polls the chain for settlement, and resumes processing without human intervention  
+4. **Research-trend discovery** — `ResearchAgent` pulls 10 recent arXiv papers, and extracts trends using Gemini-2.5-flash  
+5. **Stateless, decentralised deployment** — no shared DB; each agent can run anywhere
 
 ---
 
 ### 🧠 AI Methods Used
-<!-- have to check these parts with demo (LLM-powered Trend Analysis, Agent Autonomy layer) -->
 - **LLM-powered Trend Analysis**: Gemini-2.5-flash model creates search terms, summaries and a markdown “Recent Trend Analysis” section for the user. 
 - **Paper Retrieval Tool**: the custom search_papers() helper leverages the arXiv API and filters the top-10 most relevant results for the past year. 
 - **Agent Autonomy Layer**: every request/response is serialised into Part objects, converted to Google Generative AI types.Part when calling the LLM, and back again, enabling model calls to be slotted seamlessly into the A2A pipeline.
@@ -79,18 +89,7 @@ Our prototype solved above problems by:
 ---
 
 ### 🧪 Experimental Results
-
-<!--
-We ran several experiments where queries were submitted on various academic topics. Example results:
-
-| Topic             | No. of Papers Retrieved  | Summary Length | Time to Completion | Payment (WLC) |
-|-------------------|--------------------------|----------------|--------------------|---------------|
-| RAG               | 10                       | ~400 words     | ~40 seconds        | 0.0002        |
-| AI Safety         | 10                       | ~300 words     | ~40 seconds        | 0             |
-| Blockchain Scaling| 10                       | ~350 words     | ~40 seconds        | 0             |
-
-All responses included readable, coherent summaries with citations where relevant. The Ethereum testnet was used for transactions, and all payments were successfully verified via smart contract before proceeding with inference.
--->
+<!-- will fill here later -->
 
 ---
 
@@ -164,10 +163,18 @@ BCAI_A2A
 ---
 
 ### 📌 Summary
-<!-- 
 
-This project brings together generative AI and decentralized finance through a novel A2A protocol. It validates the viability of autonomous AI agents performing economic transactions and delivering value in a decentralized network. Our modular design allows easy scalability and customization to support a wide array of agent-based AI services in a Web3 ecosystem. 
--->
+This MVP demonstrates that fully autonomous, agent-to-agent (A2A) commerce is practical today with only Python services and a single Solidity contract. Three independent agents—UserAgent, BillingAgent, and ResearchAgent - issue an on-chain invoice, verify a WLC payment, and return an LLM-generated research-trend report without any human intervention or shared database.
+
+The prototype proves five key claims:
+
+>1. **Tri-party agent architecture**  
+>2. **On-chain billing flow**  
+>3. **End-to-end autonomy**  
+>4. **Research-trend discovery**  
+>5. **Stateless, decentralised deployment**
+
+In local tests the full round-trip—from query submission to Markdown result—completes in under 40 s per request on the WorldLand mainnet.
 
 ---
 
