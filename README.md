@@ -34,7 +34,7 @@ Inspired by **LiberVance MyAI Network**, the system features:
 
 ### 🎯 Objectives
 
-* Build a marketplace where agents can **autonomously request and fulfil AI tasks**  
+* Build a marketplace where agents can **autonomously request and fulfill AI tasks**  
 * Enable **peer-to-peer transactions** through a smart contract  
 * Guarantee **privacy** by never uploading user data to a central server  
 * Prototype a coherent pipeline that integrates agent communication, blockchain payments, and AI inference tasks
@@ -62,7 +62,7 @@ Web3 promises user sovereignty and decentralization, but autonomous **AI-to-AI c
 
 Our prototype solved above problems by:
 
-* **Executable A2A handshake** (request → invoice → payment → fulfilment)  
+* **Executable A2A handshake** (request → invoice → payment → fulfillment)  
 * **On-chain escrow** on the WorldLand network for a transparent settlement  
 * **All prompts & artefacts stay inside each agent** (never stored on a central backend)
 
