@@ -1,4 +1,4 @@
-# Web3 AI Marketplace: Agent Interaction and Payment via Smart Contracts (draft)
+# Web3 AI Marketplace: Agent Interaction And Payment Via Smart Contracts (draft)
 
 **This project was completed as the Final Project for ‘Generative AI and Blockchain 2025’ at GIST, supervised by Professor Heung-No Lee.**
 
@@ -68,16 +68,10 @@ Our prototype solved above problems by:
 
 ---
 
-### ✅ Claims and Achievements
-<!-- have to check this part (1, 3)
-1: can you check this description is right or not?
-3: does userAgent poll the chain for settlement? 
- -->
+### ✅ Claims & Achievements
 1. **Tri-party agent architecture** — `UserAgent`, `BillingAgent`, `ResearchAgent` each run independently and talk only through the A2A JSON protocol  
 2. **On-chain billing flow** — `BillingAgent` issues an invoice, verifies payment through Solidity contract's `paidContent()` function, then forwards the task  
-3. **End-to-end autonomy** — `UserAgent` signs and sends the WLC payment, polls the chain for settlement, and resumes processing without human intervention  
-4. **Research-trend discovery** — `ResearchAgent` pulls 10 recent arXiv papers, and extracts trends using Gemini-2.5-flash  
-5. **Stateless, decentralised deployment** — no shared DB; each agent can run anywhere
+3. **End-to-end autonomy** — The `UserAgent` signs and sends the WLC (Web3 Lightweight Contract) payment, while the `BillingAgent` autonomously polls the blockchain for settlement. Once settlement is detected, it proceeds to resume downstream processing, all without human intervention  
 
 ---
 
@@ -101,7 +95,7 @@ Our prototype solved above problems by:
 
 ---
 
-### 🚀 How to Run
+### 🚀 How To Run
 
 1. **Clone the repository:**
    ```bash
