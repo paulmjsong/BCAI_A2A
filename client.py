@@ -34,7 +34,6 @@ def get_session_id(request: gr.Request):
 def init_session(session_id: str):
     sessions[session_id] = {
         "chat_history": [],
-        # "log_history": [],
     }
 
 def reset_session(request: gr.Request):
@@ -138,7 +137,6 @@ async def handle_query(query, remote_url, request: gr.Request,):
         sessions.move_to_end(session_id)
     
     chat_history = session["chat_history"]
-    # log_history = session["log_history"]
     if query == "" or remote_url == "":
         return chat_history
     
