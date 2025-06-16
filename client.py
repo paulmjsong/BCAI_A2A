@@ -13,8 +13,8 @@ from a2a.types import (
 
 MY_AGENT_URL = "http://localhost:10000"         # set to user_agent's actual URL
 REMOTE_AGENT_URLS = {
-    "Billing Agent": "http://localhost:10001",   # set to billing_agent's actual URL
-    "Research Agent": "http://localhost:10002",  # set to research_agent's actual URL
+    "Research Agent": "http://localhost:10001", # set to billing_agent's actual URL
+    "(Preparing)": "",
 }
 POLL_DELAY = 3
 
@@ -53,7 +53,7 @@ async def run_client(query, remote_url, my_url=MY_AGENT_URL):
     Connects to the UserAgent, sends a query, and polls for the result.
     """
     try:
-        async with httpx.AsyncClient(timeout=60) as httpx_client:
+        async with httpx.AsyncClient(timeout=120) as httpx_client:
             client = A2AClient(httpx_client=httpx_client, url=my_url)
             # 1. Send the initial query to the UserAgent
             logger.info(f"Sending query: '{query}' to {my_url}")
@@ -76,7 +76,6 @@ async def run_client(query, remote_url, my_url=MY_AGENT_URL):
             if hasattr(resp.root, "error"):
                 error_message = resp.root.error.message
                 logger.error(error_message)
-                print(f"\n❌ Error: {error_message}")
                 return error_message
 
             task = resp.root.result
@@ -98,21 +97,18 @@ async def run_client(query, remote_url, my_url=MY_AGENT_URL):
                 if hasattr(get_task_resp.root, "error"):
                     error_message = get_task_resp.root.error.message
                     logger.error(error_message)
-                    print(f"\n❌ Error: {error_message}")
                     return error_message
 
                 task = get_task_resp.root.result
                 
                 if task.status.state == TaskState.completed:
-                    logger.info("Task completed!")
                     # The final result is stored in the task's artifacts
                     result_text = task.artifacts[0].parts[0].root.text
-                    print(f"\n✅ Success!")
+                    logger.info("Task completed!")
                     return result_text
                 if task.status.state == TaskState.failed:
                     error_message = task.status.message.parts[0].root.text
                     logger.error(error_message)
-                    print(f"\n❌ Error: {error_message}")
                     return error_message
                 # Display the intermediate status message from the agent
                 if task.status.message:
@@ -169,6 +165,10 @@ def save_history(history, session_id):
     os.makedirs(folder, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d")
     filename = os.path.join(folder, f"{timestamp}_{session_id}.json")
+    counter = 1
+    while os.path.exists(filename):
+        filename = os.path.join(folder, f"{timestamp}_{session_id}_{counter}.json")
+        counter += 1
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
@@ -188,7 +188,7 @@ div {
 .extend-height {
     min-height: 260px !important;
     flex: 1 !important;
-    overflow: auto !important;
+    overflow: hidden !important;
 }
 #agent_column {
     min_width: 100px !important;
@@ -197,6 +197,9 @@ div {
     border-radius: var(--block-radius) !important;
     box-shadow: var(--block-shadow) !important;
     padding: var(--block-padding) !important;
+}
+button {
+    min-width: 0 !important;
 }
 .btn_selected {
     background-color: var(--button-primary-background-fill) !important;
@@ -222,22 +225,19 @@ with gr.Blocks(title="My AI Client", css=css, js=js, fill_height=True) as demo:
     gr.Markdown("<h1>My AI Client</h1>")
     with gr.Row(elem_classes=["responsive-height"]):
         # Agent Selection Column
-        with gr.Column(elem_classes=["fill-height"], scale=1, elem_id="agent_column"):
-            gr.Markdown("<h3>Agents for Hire</h3>")
-            agent_btns = [gr.Button(agent, variant="secondary", elem_id=f"agent_btn{i}")
-                          for i, agent in enumerate(REMOTE_AGENT_URLS.keys())]
-        # Input/Output Column
-        with gr.Column(elem_classes=["fill-height"], scale=4):
-            chatbot = gr.Chatbot(label="Chatbot", type="messages", elem_classes=["extend-height"])
+        with gr.Column(elem_classes=["fill-height"], scale=1):
+            with gr.Column(elem_classes=["extend-height"], elem_id="agent_column"):
+                gr.Markdown("<h3>Agents for Hire</h3>")
+                agent_btns = [gr.Button(agent, variant="secondary", elem_id=f"agent_btn{i}")
+                            for i, agent in enumerate(REMOTE_AGENT_URLS.keys())]
             url_input = gr.Textbox(label="Agent URL", placeholder=f"No agent selected", interactive=False)
             user_input = gr.Textbox(label="User Query", placeholder=f"Enter your query here", lines=3)
             with gr.Row():
                 submit_btn = gr.Button("Submit", variant="primary")
                 reset_btn = gr.Button("Reset", variant="secondary")
-        # # Log Column
-        # with gr.Column(elem_classes=["fill-height"], scale=3):
-        #     gr.Markdown("<h3>Logs</h3>")
-        #     chatbot = gr.Chatbot(label="Chatbot", type="messages", elem_classes=["extend-height"])
+        # Input/Output Column
+        with gr.Column(elem_classes=["fill-height"], scale=3):
+            chatbot = gr.Chatbot(label="Chatbot", type="messages", elem_classes=["extend-height"])
     # Event listeners
     for i, agent_btn in enumerate(agent_btns):
         agent_btn.click(fn=lambda x=REMOTE_AGENT_URLS[agent_btn.value]: x, inputs=[], outputs=[url_input], 

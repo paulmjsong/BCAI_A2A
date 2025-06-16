@@ -60,7 +60,9 @@ def search_papers(query: str, max_results: int) -> list:
             "published": result.published.strftime('%Y-%m-%d'),
             "url": result.entry_id, 
         })
-    logger.debug(f"Analyzing topic from {len(papers)} papers...")
+    logger.debug(f"Retrieved {len(papers)} papers:")
+    for i, paper in enumerate(papers):
+        logger.debug(f"{i+1:02} {paper["title"]}")
     return papers
 
 
@@ -88,6 +90,7 @@ Step 4: After listing the papers, write a ## Recent Trend Analysis section that:
 📄 **Output Format (Markdown)**
 **Search Term:** *<automatically inferred search term from user query>*
 
+## Recent Papers
 1. **<Title>** (<Authors>, YYYY-MM-DD)  
    *Categories:* <arXiv categories>  
    *Summary:* <Plain English summary of the abstract.>
@@ -159,18 +162,18 @@ class ResearchAgentExecutor(AgentExecutor):
             await self._handle_event(event, updater)
     
     async def _handle_event(self, event: Event, updater: TaskUpdater):
-            if event.is_final_response():
-                parts = utils.convert_genai_parts_to_a2a(event.content.parts)
-                updater.add_artifact(parts)
-                updater.complete()
-                return
-            if not event.get_function_calls():
-                updater.update_status(
-                    TaskState.working,
-                    message=updater.new_agent_message(
-                        utils.convert_genai_parts_to_a2a(event.content.parts),
-                    ),
-                )
+        if event.is_final_response():
+            parts = utils.convert_genai_parts_to_a2a(event.content.parts)
+            updater.add_artifact(parts)
+            updater.complete()
+            return
+        if not event.get_function_calls():
+            updater.update_status(
+                TaskState.working,
+                message=updater.new_agent_message(
+                    utils.convert_genai_parts_to_a2a(event.content.parts),
+                ),
+            )
     
     # Helper functions
     async def _get_session(self, context: RequestContext):
