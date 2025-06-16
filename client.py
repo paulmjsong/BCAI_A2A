@@ -11,10 +11,10 @@ from a2a.types import (
 )
 
 
-MY_AGENT_URL = "http://localhost:10000"         # set to user_agent's actual URL
+MY_AGENT_URL = "http://localhost:10000"         # Set to user agent's actual URL
 REMOTE_AGENT_URLS = {
-    "Research Agent": "http://localhost:10001", # set to billing_agent's actual URL
-    "(Preparing)": "",
+    "Research Agent": "http://localhost:10001", # Set to remote agent's actual URL
+    "(Preparing)": "",                          # Placeholder for future agents
 }
 POLL_DELAY = 3
 
@@ -231,7 +231,7 @@ with gr.Blocks(title="My AI Client", css=css, js=js, fill_height=True) as demo:
                 agent_btns = [gr.Button(agent, variant="secondary", elem_id=f"agent_btn{i}")
                             for i, agent in enumerate(REMOTE_AGENT_URLS.keys())]
             url_input = gr.Textbox(label="Agent URL", placeholder=f"No agent selected", interactive=False)
-            user_input = gr.Textbox(label="User Query", placeholder=f"Enter your query here", lines=3)
+            user_input = gr.Textbox(label="User Query", placeholder=f"Enter your query here", lines=4)
             with gr.Row():
                 submit_btn = gr.Button("Submit", variant="primary")
                 reset_btn = gr.Button("Reset", variant="secondary")

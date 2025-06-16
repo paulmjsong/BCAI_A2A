@@ -31,8 +31,6 @@ MAX_RESULTS = 10
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-# logger = logging.getLogger("google_genai.types")
-# logger.setLevel(logging.ERROR)
 
 
 # ────────────────── arXiv search tool ──────────────────

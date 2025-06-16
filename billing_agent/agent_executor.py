@@ -2,7 +2,6 @@ import asyncio, httpx, json, logging, os, time
 from dotenv import load_dotenv
 from uuid import uuid4
 from web3 import Web3
-# from eth_account import Account
 
 from google.adk.events import Event, EventActions
 from google.adk.sessions import InMemorySessionService
@@ -21,11 +20,9 @@ from a2a.utils.errors import ServerError
 
 # ────────────────── blockchain / contract config ──────────────────
 load_dotenv()
+
 WORLDLAND_RPC_URL = "https://seoul.worldland.foundation/"
 w3 = Web3(Web3.HTTPProvider(WORLDLAND_RPC_URL))
-
-# PRIVATE_KEY_OWNER = os.getenv("PRIVATE_KEY_OWNER")
-# acct = Account.from_key(PRIVATE_KEY_OWNER)
 
 with open("billing_agent/contract_abi.json", "r") as f:
     CONTRACT_ABI = json.load(f)
@@ -209,6 +206,3 @@ class BillingAgentExecutor(AgentExecutor):
             session_id=context.task_id, 
         )
         return session
-
-
-# TODO: add functionality for withdrawal and price update

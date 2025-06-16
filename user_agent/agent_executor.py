@@ -1,11 +1,8 @@
 import asyncio, httpx, json, logging, os
-# import google.generativeai as genai
 from dotenv import load_dotenv
 from uuid import uuid4
 from web3 import Web3
 from eth_account import Account
-
-# from google.adk.agents.llm_agent import LlmAgent
 
 from a2a.client import A2AClient
 from a2a.server.agent_execution import AgentExecutor, RequestContext
@@ -21,8 +18,6 @@ from a2a.utils.errors import ServerError
 
 # ────────────────── blockchain / contract config ──────────────────
 load_dotenv()
-# GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-# genai.configure(api_key=GOOGLE_API_KEY)
 
 WORLDLAND_RPC_URL = "https://seoul.worldland.foundation/"
 w3 = Web3(Web3.HTTPProvider(WORLDLAND_RPC_URL))
@@ -34,38 +29,6 @@ POLL_DELAY = 3  # seconds
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-
-
-# # ────────────────── build LLM agent ──────────────────
-# def build_llm_agent() -> LlmAgent:
-#     prompt = """
-# You are a research-trend analyst AI.
-
-# • Use the `search_papers` tool to fetch up to 10 recent, relevant arXiv papers.
-# • For each paper, write a concise (2-3 sentence) English summary of the abstract.
-# • After listing the papers, add a **“Recent Trend Analysis”** section that synthesizes key methods, directions, or gaps you observe, citing specific paper titles or authors where useful.
-# • Output format (Markdown):
-
-# 1. **Title** (Authors, YYYY-MM-DD)  
-#    *Categories:* cs.AI, cs.CL  
-#    *Summary:* ...
-
-# 2. ...
-
-# ## Recent Trend Analysis
-# - ...
-
-# Keep the analysis clear, avoid jargon where possible, and write entirely in **English**.
-# """
-#     return LlmAgent(
-#         model='gemini-2.5-flash-preview-05-20',
-#         name='research_agent',
-#         description=(
-#             "Analyzes arXiv papers and produces Korean trend summaries"
-#         ),
-#         instruction=prompt,
-#         tools=[commission_remote_agent],
-#     )
 
 
 # ────────────────── executor ──────────────────
