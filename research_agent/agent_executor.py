@@ -60,7 +60,7 @@ def search_papers(query: str, max_results: int) -> list:
         })
     logger.debug(f"Retrieved {len(papers)} papers:")
     for i, paper in enumerate(papers):
-        logger.debug(f"{i+1:02} {paper["title"]}")
+        logger.debug(f"{i+1:02} {paper['title']}")
     return papers
 
 
