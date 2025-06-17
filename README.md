@@ -88,10 +88,7 @@ Our prototype solved above problems by:
 ---
 
 ### 🎥 Demo Video
-<!-- 
-
-🔗 attach demo video here (GIF) 
--->
+![Image](https://github.com/user-attachments/assets/24cde1ae-2266-496e-b9f6-9238194947dc)
 
 ---
 
