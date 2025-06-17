@@ -32,6 +32,12 @@ Inspired by **LiberVance MyAI Network**, the system features:
 
 ---
 
+### Project Diagram
+
+![스크린샷 2025-06-17 16 41 43](https://github.com/user-attachments/assets/63f41a27-9385-4831-8833-1e620dc171b6)
+
+---
+
 ### 🎯 Objectives
 
 * Build a marketplace where agents can **autonomously request and fulfill AI tasks**  
@@ -69,6 +75,7 @@ Our prototype solved above problems by:
 ---
 
 ### ✅ Claims & Achievements
+
 * **Tri-party agent architecture** — `UserAgent`, `BillingAgent`, `ResearchAgent` each run independently and talk only through the A2A JSON protocol  
 * **On-chain billing flow** — `BillingAgent` issues an invoice, verifies payment through Solidity contract's `paidContent()` function, then forwards the task  
 * **End-to-end autonomy** — The `UserAgent` signs and sends the WLC (Web3 Lightweight Contract) payment, while the `BillingAgent` autonomously polls the blockchain for settlement. Once settlement is detected, it proceeds to resume downstream processing, all without human intervention  
@@ -76,6 +83,7 @@ Our prototype solved above problems by:
 ---
 
 ### 🧠 AI Methods Used
+
 - **LLM-powered Trend Analysis**: Gemini-2.5-flash model creates search terms, summaries and a markdown “Recent Trend Analysis” section for the user. 
 - **Paper Retrieval Tool**: the custom search_papers() helper leverages the arXiv API and filters the top-10 most relevant results for the past year. 
 - **Agent Autonomy Layer**: every request/response is serialised into Part objects, converted to Google Generative AI types.Part when calling the LLM, and back again, enabling model calls to be slotted seamlessly into the A2A pipeline.
@@ -173,6 +181,7 @@ Please click the picture above to watch this video
 ---
 
 ### 📚 File Structure
+
 ```bash
 BCAI_A2A
 ├── billing_agent
