@@ -83,12 +83,36 @@ Our prototype solved above problems by:
 ---
 
 ### 🧪 Experimental Results
-<!-- will fill here later -->
 
+1. **Experimental Environment**
+
+| Item               | Details                                                                                             |
+|--------------------|-----------------------------------------------------------------------------------------------------|
+| **HW**             | Apple M2 Pro (16 GB RAM)                                                                            |
+| **OS / Kernel**    | macOS Sequoia 15.5                                                                                  |
+| **Python**         | 3.12.7 (`venv`)                                                                                     |
+| **Core Libraries** | FastAPI 0.111 · Uvicorn 0.30 · SQLModel 0.0.16                                                      |
+| **Smart Contract** | Deployed on the WorldLand mainnet (contract address: 0x98003661dDe56E8A4D47CC0a92Fae65d65f375c6)    |
+| **Agents**         | `billing`, `research`, `user`                                                                       |
+| **Network**        | Same-host loopback (127.0.0.1)                                                                      |
+
+> **Note** Ports are fixed to `billing:10000`, `research:10001`, and `user:10002` for this experiment.  
+
+
+
+2. **Scenario Definition**
+
+- **Submit Query.** The browser UI (left pane) sends a `POST /query` request with JSON body `{ "query": "VQA" }` to the **User Agent**.  
+- **Payment Phase.** The User Agent calls the **Billing Agent**, which signs and broadcasts a smart-contract transaction.  
+- **Research Phase.** After the payment-confirmed event is received, the **Billing Agent** invokes the **Research Agent**, which crawls 10 papers and generates an LLM-based summary and research trends.  
+- **Return & Display.** The **Research Agent** returns the summaries and trends to the **User Agent** via the **Billing Agent**; the results are displayed in the browser UI.  
+ 
 ---
 
 ### 🎥 Demo Video
 [![Demo Video](https://img.youtube.com/vi/7P3vQ9LGHOw/0.jpg)](https://www.youtube.com/watch?v=7P3vQ9LGHOw)
+
+Please click the picture above to watch this video
 
 ---
 
