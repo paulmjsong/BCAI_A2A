@@ -56,9 +56,9 @@ This project is a **minimum viable product (MVP)** focused on a research-trend d
 
 Web3 promises user sovereignty and decentralization, but autonomous **AI-to-AI commerce** still lacks a shared framework. Specifically:
 
-1. No open workflow that allows agents to commission, pay for and deliver AI work without relying on centralized APIs or custodial wallets  
-2. ERC-20 payments incur high gas costs or batching overhead, so they are inappropriate for “pay-per-request” AI.  
-3. Traditional AI SaaS logs user data on vendor servers, so it provides weak data protection safeguards.
+* No open workflow that allows agents to commission, pay for and deliver AI work without relying on centralized APIs or custodial wallets  
+* ERC-20 payments incur high gas costs or batching overhead, so they are inappropriate for “pay-per-request” AI.  
+* Traditional AI SaaS logs user data on vendor servers, so it provides weak data protection safeguards.
 
 Our prototype solved above problems by:
 
@@ -69,9 +69,9 @@ Our prototype solved above problems by:
 ---
 
 ### ✅ Claims & Achievements
-1. **Tri-party agent architecture** — `UserAgent`, `BillingAgent`, `ResearchAgent` each run independently and talk only through the A2A JSON protocol  
-2. **On-chain billing flow** — `BillingAgent` issues an invoice, verifies payment through Solidity contract's `paidContent()` function, then forwards the task  
-3. **End-to-end autonomy** — The `UserAgent` signs and sends the WLC (Web3 Lightweight Contract) payment, while the `BillingAgent` autonomously polls the blockchain for settlement. Once settlement is detected, it proceeds to resume downstream processing, all without human intervention  
+* **Tri-party agent architecture** — `UserAgent`, `BillingAgent`, `ResearchAgent` each run independently and talk only through the A2A JSON protocol  
+* **On-chain billing flow** — `BillingAgent` issues an invoice, verifies payment through Solidity contract's `paidContent()` function, then forwards the task  
+* **End-to-end autonomy** — The `UserAgent` signs and sends the WLC (Web3 Lightweight Contract) payment, while the `BillingAgent` autonomously polls the blockchain for settlement. Once settlement is detected, it proceeds to resume downstream processing, all without human intervention  
 
 ---
 
@@ -183,11 +183,11 @@ This MVP demonstrates that fully autonomous, agent-to-agent (A2A) commerce is pr
 
 The prototype proves five key claims:
 
->1. **Tri-party agent architecture**  
->2. **On-chain billing flow**  
->3. **End-to-end autonomy**  
->4. **Research-trend discovery**  
->5. **Stateless, decentralised deployment**
+>* **Tri-party agent architecture**  
+>* **On-chain billing flow**  
+>* **End-to-end autonomy**  
+>* **Research-trend discovery**  
+>* **Stateless, decentralised deployment**
 
 In local tests the full round-trip—from query submission to Markdown result—completes in under 40 s per request on the WorldLand mainnet.
 
