@@ -88,7 +88,7 @@ Our prototype solved above problems by:
 ---
 
 ### 🎥 Demo Video
-![Image](https://github.com/user-attachments/assets/24cde1ae-2266-496e-b9f6-9238194947dc)
+[![Demo Video](https://www.youtube.com/watch?v=7P3vQ9LGHOw/0.jpg)](https://www.youtube.com/watch?v=7P3vQ9LGHOw)
 
 ---
 
