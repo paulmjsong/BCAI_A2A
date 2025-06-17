@@ -175,7 +175,6 @@ Please click the picture above to watch this video
 ### 📚 File Structure
 ```bash
 BCAI_A2A
-├── A2A demo.mp4
 ├── billing_agent
 │   ├── __main__.py
 │   ├── agent_executor.py
