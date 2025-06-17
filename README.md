@@ -82,6 +82,28 @@ Our prototype solved above problems by:
 
 ---
 
+### 🌐 Open-source Code
+
+| Library | License Type | Notes |
+| --------------------------- | ---------------- | --------------------------------------- |
+| `a2a-sdk` | MIT (on GitHub) | Agent-to-agent communication lib |
+| `aiohttp`, `aiofiles` | Apache 2.0 / MIT | Async networking / file I/O |
+| `fastapi`, `starlette` | MIT | Web framework / ASGI toolkit |
+| `gradio`, `gradio_client` | Apache 2.0 | UI interface for ML apps |
+| `pydantic`, `pydantic_core` | MIT | Data validation |
+| `requests`, `httpx` | Apache 2.0 / BSD | HTTP client libraries |
+| `google-*` packages | Apache 2.0 | Google Cloud APIs, maintained by Google |
+| `protobuf`, `grpcio` | BSD / Apache 2.0 | Protocol buffers and gRPC |
+| `eth-*`, `web3` | MIT | Ethereum interaction libraries |
+| `uvicorn` | BSD | ASGI server |
+| `SQLAlchemy` | MIT | SQL ORM |
+| `numpy`, `pandas` | BSD | Scientific computing / data analysis |
+| `orjson` | Apache 2.0 | High-performance JSON parsing |
+| `Authlib` | BSD | OAuth and JWT handling |
+| `huggingface-hub` | Apache 2.0 | HuggingFace's model API client |
+
+---
+
 ### 🧪 Experimental Results
 
 1. **Experimental Environment**
@@ -153,23 +175,26 @@ Please click the picture above to watch this video
 ### 📚 File Structure
 ```bash
 BCAI_A2A
-├── .env
-├── BillingContract.sol
-├── README.md
+├── A2A demo.mp4
 ├── billing_agent
-│   ├── __main__.py
-│   ├── agent_executor.py
-│   └── contract_abi.json
+│   ├── __main__.py
+│   ├── agent_executor.py
+│   └── contract_abi.json
+├── BillingContract.sol
+├── chat_logs (experimental results)
+│   └── 20250616_94cbc6477bb853a57ec020c6877a8d9ff7bb4a348d8ce5eb8e5c5e29286905ea.json
 ├── client.py
+├── LICENSE
+├── README.md
 ├── requirement.txt
 ├── research_agent
-│   ├── __main__.py
-│   ├── agent_executor.py
-│   └── utils.py
+│   ├── __main__.py
+│   ├── agent_executor.py
+│   └── utils.py
 ├── run
-│   ├── start_billing.sh
-│   ├── start_research.sh
-│   └── start_user.sh
+│   ├── start_billing.sh
+│   ├── start_research.sh
+│   └── start_user.sh
 └── user_agent
     ├── __main__.py
     └── agent_executor.py
