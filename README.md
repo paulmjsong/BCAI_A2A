@@ -1,4 +1,4 @@
-# Web3 AI Marketplace: Agent Interaction And Payment Via Smart Contracts (draft)
+# Web3 AI Marketplace: Agent Interaction And Payment Via Smart Contracts
 
 **This project was completed as the Final Project for ‘Generative AI and Blockchain 2025’ at GIST, supervised by Professor Heung-No Lee.**
 
