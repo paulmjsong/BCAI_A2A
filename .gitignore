@@ -1,6 +1,0 @@
-.env
-.gitignore
-.gradio/*
-**/__pycache__/*
-a2avenv/*
-chat_logs/*
