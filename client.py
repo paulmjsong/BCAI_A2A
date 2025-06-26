@@ -28,16 +28,21 @@ sessions = OrderedDict()
 session_lock = threading.Lock()
 
 def get_session_id(request: gr.Request):
+    """Generate unique session ID"""
     raw_id = request.client.host + str(request.headers.get("user-agent"))
     return hashlib.sha256(raw_id.encode()).hexdigest()
 
 def init_session(session_id: str):
+    """Initialize session with empty chat history"""
+    if len(sessions) >= MAX_SESSIONS:
+        evicted_id, _ = sessions.popitem(last=False)
+        print(f"🧹 Removed LRU session: {evicted_id[:8]}...")
     sessions[session_id] = {
         "chat_history": [],
     }
 
 def reset_session(request: gr.Request):
-    """대화 및 파일 업로드 내역 삭제"""
+    """Reset current session by clearing chat history"""
     session_id = get_session_id(request)
     with session_lock:
         init_session(session_id)
@@ -124,13 +129,11 @@ async def run_client(query, remote_url, my_url=MY_AGENT_URL):
 
 # ────────────────── handle query ──────────────────
 async def handle_query(query, remote_url, request: gr.Request,):
+    """Handles user query by invoking client"""
     session_id = get_session_id(request)
     # Ensure session-safe access
     with session_lock:
         if session_id not in sessions:
-            if len(sessions) >= MAX_SESSIONS:
-                evicted_id, _ = sessions.popitem(last=False)
-                print(f"🧹 Removed LRU session: {evicted_id[:8]}...")
             init_session(session_id)
             print(f"✅ New session created: {session_id[:8]}... | Total sessions: {len(sessions)}")
         session = sessions[session_id]
@@ -158,20 +161,20 @@ async def handle_query(query, remote_url, request: gr.Request,):
 
 # ────────────────── save history ──────────────────
 def save_history(history, session_id):
-    """대화 기록(history)을 JSON 파일로 저장"""
+    """Saves chat history to JSON file with timestamp and session ID"""
     folder = "./chat_logs"
     os.makedirs(folder, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d")
-    filename = os.path.join(folder, f"{timestamp}_{session_id}.json")
+    filename = os.path.join(folder, f"{timestamp}_{session_id[:16]}.json")
     counter = 1
     while os.path.exists(filename):
-        filename = os.path.join(folder, f"{timestamp}_{session_id}_{counter}.json")
+        filename = os.path.join(folder, f"{timestamp}_{session_id[:16]}_{counter}.json")
         counter += 1
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
 
-# ────────────────── main ──────────────────
+# ────────────────── gradio ui ──────────────────
 css = """
 div {
     flex-wrap: nowrap !important;

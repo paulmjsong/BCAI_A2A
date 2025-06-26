@@ -11,9 +11,9 @@ from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events.event_queue import EventQueue
 from a2a.server.tasks import TaskUpdater
 from a2a.types import (
-    Message, MessageSendParams, SendMessageRequest, TaskQueryParams,
-    GetTaskRequest, GetTaskSuccessResponse, Part, TextPart, 
-    TaskState, UnsupportedOperationError,
+    AgentCard, Message, MessageSendParams, SendMessageRequest,
+    GetTaskRequest, GetTaskSuccessResponse, TaskState, TaskQueryParams,
+    Part, TextPart, UnsupportedOperationError,
 )
 from a2a.utils.errors import ServerError
 

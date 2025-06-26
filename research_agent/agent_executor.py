@@ -14,12 +14,11 @@ from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events.event_queue import EventQueue
 from a2a.server.tasks import TaskUpdater
 from a2a.types import (
-    AgentCard,
-    TaskState, UnsupportedOperationError,
+    AgentCard, TaskState, UnsupportedOperationError,
 )
 from a2a.utils.errors import ServerError
 
-import utils  # A2A<->GenAI conversion helpers
+# import utils  # A2A<->GenAI conversion helpers
 
 
 # ────────────────── genai config ──────────────────
@@ -142,26 +141,28 @@ class ResearchAgentExecutor(AgentExecutor):
             updater.submit()
         updater.start_work()
         
-        user_content = types.UserContent(
-            parts=utils.convert_a2a_parts_to_genai(context.message.parts)
+        user_query = types.UserContent(
+            # parts=utils.convert_a2a_parts_to_genai(context.message.parts)
+            parts=context.message.parts
         )
         logger.debug("Processing request...")
-        await self._process_request(user_content, context, updater)
+        await self._process_request(user_query, context, updater)
         logger.debug("Task completed")
     
-    async def _process_request(self, user_msg: types.UserContent, context: RequestContext, updater: TaskUpdater):
+    async def _process_request(self, user_query: types.UserContent, context: RequestContext, updater: TaskUpdater):
         session = await self._get_session(context)
         async for event in self.runner.run_async(
             session_id=session.id, 
             user_id=session.user_id, 
-            new_message=user_msg, 
+            new_message=user_query, 
             run_config=RunConfig(), 
         ):
             await self._handle_event(event, updater)
     
     async def _handle_event(self, event: Event, updater: TaskUpdater):
         if event.is_final_response():
-            parts = utils.convert_genai_parts_to_a2a(event.content.parts)
+            # parts = utils.convert_genai_parts_to_a2a(event.content.parts)
+            parts = event.content.parts
             updater.add_artifact(parts)
             updater.complete()
             return
@@ -169,7 +170,8 @@ class ResearchAgentExecutor(AgentExecutor):
             updater.update_status(
                 TaskState.working,
                 message=updater.new_agent_message(
-                    utils.convert_genai_parts_to_a2a(event.content.parts),
+                    # utils.convert_genai_parts_to_a2a(event.content.parts),
+                    event.content.parts,
                 ),
             )
     
