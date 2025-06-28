@@ -1,3 +1,4 @@
+import utils
 import arxiv, logging, os
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -142,8 +143,8 @@ class ResearchAgentExecutor(AgentExecutor):
         updater.start_work()
         
         user_query = types.UserContent(
-            # parts=utils.convert_a2a_parts_to_genai(context.message.parts)
-            parts=context.message.parts
+            parts=utils.convert_a2a_parts_to_genai(context.message.parts)
+            # parts=context.message.parts
         )
         logger.debug("Processing request...")
         await self._process_request(user_query, context, updater)
@@ -161,8 +162,8 @@ class ResearchAgentExecutor(AgentExecutor):
     
     async def _handle_event(self, event: Event, updater: TaskUpdater):
         if event.is_final_response():
-            # parts = utils.convert_genai_parts_to_a2a(event.content.parts)
-            parts = event.content.parts
+            parts = utils.convert_genai_parts_to_a2a(event.content.parts)
+            # parts = event.content.parts
             updater.add_artifact(parts)
             updater.complete()
             return
@@ -170,8 +171,8 @@ class ResearchAgentExecutor(AgentExecutor):
             updater.update_status(
                 TaskState.working,
                 message=updater.new_agent_message(
-                    # utils.convert_genai_parts_to_a2a(event.content.parts),
-                    event.content.parts,
+                    utils.convert_genai_parts_to_a2a(event.content.parts),
+                    # event.content.parts,
                 ),
             )
     
