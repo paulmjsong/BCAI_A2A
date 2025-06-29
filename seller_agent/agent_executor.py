@@ -28,8 +28,23 @@ w3 = Web3(Web3.HTTPProvider(WORLDLAND_RPC_URL))
 PRIVATE_KEY_SELLER = os.getenv("PRIVATE_KEY_SELLER")
 acct = Account.from_key(PRIVATE_KEY_SELLER)
 
-with open("billing_agent/contract_abi.json", "r") as f:
+# correct typo
+with open("seller_agent/contract_abi.json", "r") as f:
     CONTRACT_ABI = json.load(f)
+
+# ----- add -----
+REQUIRED_FUNCS = {"createOrder", "settlePayment", "refund"}
+missing = REQUIRED_FUNCS - {
+    fn["name"] for fn in CONTRACT_ABI if fn.get("type") == "function"
+}
+
+if missing:
+    raise RuntimeError(
+        f"Contract ABI missing required functions: {', '.join(sorted(missing))}"
+    )
+
+# ----- end of add -----
+
 CONTRACT_ADDR = os.getenv("CONTRACT_ADDRESS")
 PRICE_WEI     = 10**18  # 1 WLC example
 contract      = w3.eth.contract(address=CONTRACT_ADDR, abi=CONTRACT_ABI)
@@ -142,20 +157,49 @@ class BillingAgentExecutor(AgentExecutor):
             if content_parts is None:
                 return self._fail(updater, "Research agent failed")
             
-            # 6) Send content + hash to buyer
+            # # 6) Send content + hash to buyer (origianl)
+            # content_txt = "".join(p.root.text for p in content_parts)
+            # hash = hashlib.sha256(content_txt.encode()).hexdigest()
+            # order["status"] = "content_sent"
+            # order["hash"]   = hash
+            # await self._save(session, orders)
+
+            # updater.update_status(
+            #     TaskState.input_required,
+            #     message=updater.new_agent_message([
+            #         Part(TextPart(text=content_txt)),
+            #         Part(TextPart(text=hash)),
+            #     ]),
+            # )
+
+            # 6) Send (hash -> message) (content -> artifact) # add
             content_txt = "".join(p.root.text for p in content_parts)
             hash = hashlib.sha256(content_txt.encode()).hexdigest()
+
             order["status"] = "content_sent"
             order["hash"]   = hash
+            
             await self._save(session, orders)
 
-            updater.update_status(
-                TaskState.input_required,
+            updater.add_artifact([Part(TextPart(text=content_txt))])
+            
+            # # original
+            # updater.update_status(
+            #     TaskState.input_required,
+            #     message=updater.new_agent_message([
+            #         Part(TextPart(text=content_txt)),
+            #         Part(TextPart(text=hash)),
+            #     ]),
+            # )
+
+            # ----- edited -----
+            updater.complete(
                 message=updater.new_agent_message([
-                    Part(TextPart(text=content_txt)),
                     Part(TextPart(text=hash)),
                 ]),
             )
+            # ----- end of edited -----
+
             return
         
         # PHASE 3
@@ -231,8 +275,10 @@ class BillingAgentExecutor(AgentExecutor):
     
     # ResearchAgent helper
     async def _call_research_agent(self, user_query: str):
-        async with httpx.AsyncClient(timeout=60) as httpx_client:
+        # changed timeout
+        async with httpx.AsyncClient(timeout=3600) as httpx_client:
             client = A2AClient(httpx_client=httpx_client, url=self.research_agent_endpoint)
+
             resp = await client.send_message(
                 SendMessageRequest(
                     id=str(uuid4()),
@@ -246,7 +292,13 @@ class BillingAgentExecutor(AgentExecutor):
                     )
                 )
             )
-            task_id = resp.root.result.id
+            # task_id = resp.root.result.id # original
+
+            # ----- edited -----
+            result = resp.root.result
+            task_id = result if isinstance(result, str) else result.id
+
+            # ----- end of edited -----
             while True:
                 await asyncio.sleep(POLL_DELAY)
                 gt = await client.get_task(
@@ -258,10 +310,22 @@ class BillingAgentExecutor(AgentExecutor):
                 if not isinstance(gt.root, GetTaskSuccessResponse):
                     return None
                 t = gt.root.result
-                if t.status.state == TaskState.completed and t.artifacts:
-                    return t.artifacts[0].parts
-                if t.status.state == TaskState.failed:
-                    return None
+
+                # original code                
+                # if t.status.state == TaskState.failed and t.artifacts:
+                #     return t.artifacts[0].parts
+                # if t.status.state == TaskState.failed:
+                #     return None:
+
+                # ----- edited -----
+                if t.status.state == TaskState.completed:
+                    if t.artifacts:
+                        return t.artifacts[0].parts
+                    
+                    else:
+                        return None
+                    
+                # ----- end of edited -----
     
     # Misc helpers
     async def _save(self, session, orders):

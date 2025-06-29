@@ -18,8 +18,9 @@ from a2a.types import (
 )
 from a2a.utils.errors import ServerError
 
-# import utils  # A2A<->GenAI conversion helpers
-
+# ----- added -----
+import utils  # A2A<->GenAI conversion helpers
+# ----- end of added -----
 
 # ────────────────── genai config ──────────────────
 load_dotenv()
@@ -142,10 +143,11 @@ class ResearchAgentExecutor(AgentExecutor):
         updater.start_work()
         
         user_query = types.UserContent(
-            # parts=utils.convert_a2a_parts_to_genai(context.message.parts)
-            parts=context.message.parts
+            parts=utils.convert_a2a_parts_to_genai(context.message.parts)
+            # parts=context.message.parts
         )
         logger.debug("Processing request...")
+
         await self._process_request(user_query, context, updater)
         logger.debug("Task completed")
     
@@ -161,8 +163,9 @@ class ResearchAgentExecutor(AgentExecutor):
     
     async def _handle_event(self, event: Event, updater: TaskUpdater):
         if event.is_final_response():
-            # parts = utils.convert_genai_parts_to_a2a(event.content.parts)
-            parts = event.content.parts
+            # switch comments
+            parts = utils.convert_genai_parts_to_a2a(event.content.parts)
+            # parts = event.content.parts
             updater.add_artifact(parts)
             updater.complete()
             return
@@ -170,8 +173,9 @@ class ResearchAgentExecutor(AgentExecutor):
             updater.update_status(
                 TaskState.working,
                 message=updater.new_agent_message(
-                    # utils.convert_genai_parts_to_a2a(event.content.parts),
-                    event.content.parts,
+                    # switch comments
+                    utils.convert_genai_parts_to_a2a(event.content.parts),
+                    # event.content.parts,
                 ),
             )
     

@@ -57,7 +57,8 @@ async def run_client(query, remote_url, my_url=MY_AGENT_URL):
     Connects to the UserAgent, sends a query, and polls for the result.
     """
     try:
-        async with httpx.AsyncClient(timeout=120) as httpx_client:
+        # changed timeout
+        async with httpx.AsyncClient(timeout=3600) as httpx_client:
             client = A2AClient(httpx_client=httpx_client, url=my_url)
             # 1. Send the initial query to the UserAgent
             logger.info(f"Sending query: '{query}' to {my_url}")

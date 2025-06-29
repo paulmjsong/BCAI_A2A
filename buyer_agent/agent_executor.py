@@ -61,7 +61,8 @@ class BuyerAgentExecutor(AgentExecutor):
         user_query = context.message.parts[0].root.text.strip()
         remote_url = context.message.parts[1].root.text.strip()
 
-        async with httpx.AsyncClient(timeout=60) as httpx_client:
+        # change timeout
+        async with httpx.AsyncClient(timeout=3600) as httpx_client:
             client = A2AClient(httpx_client=httpx_client, url=remote_url)
             
             # 1) Send purchase intent to seller
@@ -85,16 +86,40 @@ class BuyerAgentExecutor(AgentExecutor):
 
             # 2) Poll for quote from seller
             self._step(updater, "Waiting for quote from seller...")
-            task1 = await self._poll_task(
-                client, resp1.root.result.id, updater
+            # # original code
+            # task1 = await self._poll_task(
+            #     client, resp1.root.result.id, updater
+            # )
+
+            # ----- edit -----
+            task_id1 = (
+                resp1.root.result
+                if isinstance(resp1.root.result, str)
+                else resp1.root.result.id
             )
+
+            task1 = await self._poll_task(client, task_id1, updater)
+            # ----- end of edit -----
             if task1.status.state != TaskState.input_required:
                 return self._fail(updater, "Seller did not provide quote")
             
+            # ----- edit -----
+            try:
+                quote = json.loads(task1.status.message.parts[0].root.text)
+            except (json.JSONDecodeError, AttributeError) as exc:
+                return self._fail(updater, f"Malformed quote: {exc}")
+            
+            required = {"chainId", "orderId", "contract", "abi", "priceWei"}
+            if missing := required - quote.keys():
+                return self._fail(updater, f"Quote missing fields: {', '.join(missing)}")
+
+            # ----- end of edit -----
+
             if int(quote["chainId"]) != w3.eth.chain_id:
                 return self._fail(updater, "Seller quote targets a different chain")
             
-            quote = json.loads(task1.status.message.parts[0].root.text)
+            # # original code
+            # quote = json.loads(task1.status.message.parts[0].root.text)
             order_id  = quote["orderId"]
             order_b32 = Web3.keccak(text=order_id)  # bytes32 key
             contract  = w3.eth.contract(address=quote["contract"], abi=quote["abi"])
@@ -107,13 +132,17 @@ class BuyerAgentExecutor(AgentExecutor):
 
             # 4) Send order confirmation to seller (orderId + buyer address)
             self._step(updater, "Sending order confirmation...")
+
+            thread_id1 = getattr(task1, "id", task_id1) # added code
+
             resp2 = await client.send_message(
                 SendMessageRequest(
                     id=str(uuid4()),
                     params=MessageSendParams(
                         message=Message(
                             contextId=context.context_id,
-                            taskId=task1.id,  # continue same task thread
+                            # taskId=task1.id,   # continue same task thread (original code)
+                            taskId = thread_id1, # added code
                             role="user",
                             messageId=str(uuid4()),
                             parts=[
@@ -127,19 +156,46 @@ class BuyerAgentExecutor(AgentExecutor):
 
             # 5) Poll for content delivery with hash from seller
             self._step(updater, "Waiting for content delivery...")
-            task2 = await self._poll_task(
-                client, resp2.root.result.id, updater
+
+            # # original code
+            # task2 = await self._poll_task(
+            #     client, resp2.root.result.id, updater
+            # )
+
+            # ----- edit -----
+            task_id2 = (
+                resp2.root.result
+                if isinstance(resp2.root.result, str)
+                else resp2.root.result.id
             )
+
+            task2 = await self._poll_task(
+                client, task_id2, updater
+            )
+            # ----- end of edit -----
 
             if task2.status.state == TaskState.failed:
                 return self._fail(updater, "Seller agent failed: " + 
                                   task2.status.message.parts[0].root.text)
 
+            # # 6) Verify content hash (original code)
+            # self._step(updater, "Content received. Verifying hash...")
+            # content_data  = task2.status.message.parts[0].root.text
+            # provided_hash = task2.status.message.parts[1].root.text
+            # computed_hash = hashlib.sha256(content_data.encode('utf-8')).hexdigest()
+
+            # ----- edit -----
             # 6) Verify content hash
             self._step(updater, "Content received. Verifying hash...")
-            content_data  = task2.status.message.parts[0].root.text
-            provided_hash = task2.status.message.parts[1].root.text
+
+            provided_hash = task2.status.message.parts[0].root.text.strip()
+
+            if not task2.artifacts:
+                return self._fail(updater, "Seller sent no artifact with the content")
+
+            content_data = "".join(p.root.text for p in task2.artifacts[0].parts)
             computed_hash = hashlib.sha256(content_data.encode('utf-8')).hexdigest()
+            # ----- end of edit -----
 
             if computed_hash.lower() == provided_hash.lower():
                 # 6a) Hash matches → confirm order
@@ -148,13 +204,15 @@ class BuyerAgentExecutor(AgentExecutor):
                 await asyncio.to_thread(w3.eth.wait_for_transaction_receipt, txh2)
 
                 # Notify seller about successful delivery
+                thread_id2 = getattr(task2, "id", task_id2) # added code
                 await client.send_message(
                     SendMessageRequest(
                         id=str(uuid4()),
                         params=MessageSendParams(
                             message=Message(
                                 contextId=context.context_id,
-                                taskId=task2.id,
+                                # taskId=task2.id, # original code
+                                taskId=thread_id2, # added code
                                 role="user",
                                 messageId=str(uuid4()),
                                 parts=[
@@ -180,7 +238,8 @@ class BuyerAgentExecutor(AgentExecutor):
                         params=MessageSendParams(
                             message=Message(
                                 contextId=context.context_id,
-                                taskId=task2.id,
+                                # taskId=task2.id,                     # original code
+                                taskId=getattr(task2, "id", task_id2), # added code
                                 role="user",
                                 messageId=str(uuid4()),
                                 parts=[
@@ -237,16 +296,33 @@ class BuyerAgentExecutor(AgentExecutor):
     # Misc helpers
     async def _poll_task(self, client, task_id: str, updater: TaskUpdater):
         while True:
-            gt = await client.get_task(
+            # # original code
+            # gt = await client.get_task(
+            #     GetTaskRequest(
+            #         id=str(uuid4()),
+            #         params=TaskQueryParams(id=task_id)
+            #     )
+            # )
+            # t = gt.root.result
+            # if t.status.state != TaskState.working:
+            #     return t
+            # await asyncio.sleep(POLL_DELAY)
+
+            # ----- edit -----
+            resp = await client.get_task(
                 GetTaskRequest(
-                    id=str(uuid4()),
+                    id = str(uuid4()),
                     params=TaskQueryParams(id=task_id)
                 )
             )
-            t = gt.root.result
-            if t.status.state != TaskState.working:
-                return t
+
+            task = resp.root.result
+            if task.status.state in (TaskState.completed, TaskState.failed):
+                return task
+
             await asyncio.sleep(POLL_DELAY)
+            # ----- end of edit -----
+
             self._step(updater, f"Still waiting...")
     
     def _step(self, updater: TaskUpdater, msg: str):

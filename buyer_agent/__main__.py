@@ -6,7 +6,7 @@ from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
-from agent_executor import UserAgentExecutor
+from agent_executor import BuyerAgentExecutor # User -> Buyer
 
 
 logging.basicConfig()
@@ -38,8 +38,8 @@ def main(host, port):
     )
     # 3. 에이전트 서버 실행
     request_handler = DefaultRequestHandler(
-        agent_executor=UserAgentExecutor(),
-        task_store=InMemoryTaskStore(),
+        agent_executor=BuyerAgentExecutor(), # User -> Buyer
+        task_store=InMemoryTaskStore()
     )
     server = A2AStarletteApplication(
         agent_card=agent_card,

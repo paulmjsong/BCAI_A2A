@@ -1,4 +1,37 @@
 [
+	// ----- added by jun ----- (have to be remove this comment)
+	{                 
+		"inputs": [
+		{ "internalType": "bytes32", "name": "orderId",  "type": "bytes32" },
+		{ "internalType": "address", "name": "buyer",    "type": "address" },
+		{ "internalType": "uint256", "name": "amount",   "type": "uint256" }
+		],
+		"name": "createOrder",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{                 
+		"inputs": [
+		{ "internalType": "bytes32", "name": "orderId", "type": "bytes32" }
+		],
+		"name": "settlePayment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{                 
+		"inputs": [
+		{ "internalType": "bytes32", "name": "orderId", "type": "bytes32" }
+		],
+		"name": "refund",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+    },
+
+	// ----- end of added by jun ----- (have to be remove this comment)
+
 	{
 		"inputs": [
 			{
